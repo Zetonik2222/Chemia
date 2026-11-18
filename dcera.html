@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>chémia</title>
+<meta name="theme-color" content="#13071a">
+<meta name="description" content="Náučná hra na alkény – pre tých, čo chémiu neznášajú.">
+<link rel="manifest" href="manifest-dcera.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="chémia">
+<style>
+:root{
+  --bg:#0a0e0b; --panel:#131a15; --panel2:#1a231d; --line:#26342a;
+  --neon:#7CFF4F; --neon-d:#4fcf2a; --text:#e6efe6; --muted:#8c9e8e;
+  --c0:#3ddc84; --c1:#b26bff; --c2:#ff9f43; --c3:#4da3ff;
+  --bad:#ff5c5c; --paper:#f4f1e8; --ink:#1b1b1b;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cg fill='none' stroke='%237CFF4F' stroke-opacity='.06' stroke-width='1.5'%3E%3Cpath d='M28 1 L55 17 L55 49 L28 65 L1 49 L1 17 Z'/%3E%3Cpath d='M28 65 L28 97'/%3E%3C/g%3E%3C/svg%3E");
+}
+button{font:inherit;color:inherit;cursor:pointer}
+.app{max-width:680px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(40px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));min-height:100%}
+.screen{display:none;animation:fade .25s ease}
+.screen.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* --- domov --- */
+.hero{text-align:center;padding:10px 0 6px}
+.hero .mascot{width:130px;height:auto}
+h1.logo{font-size:3.2rem;margin:4px 0 0;letter-spacing:.02em;color:var(--neon);text-shadow:0 0 18px rgba(124,255,79,.45);font-weight:800}
+.tag{color:var(--muted);margin:4px 0 14px;font-style:italic}
+.dedic[hidden]{display:none}
+.dedic{margin:0 auto 22px;padding:10px 14px;border:1px dashed rgba(124,255,79,.35);border-radius:12px;display:inline-block;line-height:1.6;font-size:1.02rem}
+.big{display:block;width:100%;text-align:left;background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:16px 18px;margin:0 0 12px;transition:transform .1s,border-color .2s}
+.big:hover{border-color:var(--neon)}
+.big:active{transform:scale(.985)}
+.big .bt{display:block;font-size:1.25rem;font-weight:700}
+.big .bs{display:block;color:var(--muted);font-size:.92rem;margin-top:4px}
+.big .badge{float:right;font-size:1.6rem;line-height:1}
+.row{display:flex;gap:10px}
+.row>button{flex:1}
+.ghost{background:transparent;border:2px solid var(--line);border-radius:14px;padding:12px;color:var(--text)}
+.ghost:hover{border-color:var(--neon)}
+.primary{background:var(--neon);color:#0a1a05;border:0;border-radius:14px;padding:14px 18px;font-weight:800;font-size:1.05rem}
+.primary:active{transform:scale(.98)}
+.back{background:none;border:0;color:var(--muted);padding:6px 0;margin-bottom:6px;font-size:1rem}
+h2{margin:6px 0 4px;font-size:1.5rem}
+.sub{color:var(--muted);margin:0 0 16px}
+
+/* --- kvíz --- */
+.qtop{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.qtop .mini{width:46px;height:auto;flex:none}
+.qinfo{flex:1;display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
+.qinfo .muted{color:var(--muted);font-weight:500;font-size:.9rem}
+.streak{color:var(--c2)}
+.timer{height:10px;background:var(--panel2);border-radius:6px;overflow:hidden;margin-bottom:14px}
+.timer>i{display:block;height:100%;width:100%;background:var(--neon);border-radius:6px;transition:background .3s}
+.timer.warn>i{background:var(--c2)}
+.timer.crit>i{background:var(--bad)}
+.prompt{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:14px}
+.prompt .ask{color:var(--muted);font-size:.95rem;margin:0 0 8px}
+.prompt .name{font-size:1.55rem;font-weight:800;text-align:center;padding:10px 4px;word-break:break-word;color:var(--neon)}
+.paper{background:var(--paper);color:var(--ink);border-radius:12px;padding:10px;overflow-x:auto;display:block}
+.paper svg.formula{display:block;margin:0 auto;height:auto;width:calc(var(--fw) * 1.15px);max-width:100%;min-width:calc(var(--fw) * .55px)}
+.opts{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:560px){.opts.two{grid-template-columns:1fr 1fr}}
+.opt{position:relative;display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--panel);border:3px solid var(--c);border-radius:14px;padding:12px 14px;font-size:1.08rem;font-weight:600;min-height:58px;transition:transform .1s,opacity .2s,box-shadow .2s;word-break:break-word}
+.opt:active{transform:scale(.985)}
+.opt .shp{color:var(--c);font-size:1.25rem;flex:none;width:22px;text-align:center}
+.opt.f{flex-direction:column;align-items:stretch;padding:8px}
+.opt.f .shp{position:absolute;left:10px;top:8px;z-index:1}
+.opt.f .paper{padding:8px 8px 8px 26px}
+.opt.f svg.formula{width:calc(var(--fw) * .95px);min-width:calc(var(--fw) * .5px)}
+.opt[disabled]{cursor:default}
+.opt.dim{opacity:.38}
+.opt.right{opacity:1;box-shadow:0 0 0 3px rgba(124,255,79,.0),0 0 22px rgba(124,255,79,.45)}
+.opt.wrong{border-color:var(--bad);opacity:1}
+.opt .mark{position:absolute;right:-8px;top:-10px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.05rem;color:#0a1a05}
+.opt.right .mark{background:var(--neon)}
+.opt.wrong .mark{background:var(--bad);color:#fff}
+.c0{--c:var(--c0)}.c1{--c:var(--c1)}.c2{--c:var(--c2)}.c3{--c:var(--c3)}
+.typed input{width:100%;font:inherit;font-size:1.25rem;padding:14px;border-radius:14px;border:3px solid var(--c1);background:var(--panel);color:var(--text);outline:none}
+.typed input:focus{border-color:var(--neon)}
+.keys{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.keys button{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:1.05rem;min-width:44px}
+.typed .primary{width:100%}
+.hint{color:var(--muted);font-size:.88rem;margin:8px 0 0}
+
+/* --- spätná väzba --- */
+.fb{margin-top:14px;border-radius:16px;padding:14px 16px;background:var(--panel);border:2px solid var(--line);animation:fade .25s ease}
+.fb.ok{border-color:var(--neon)}
+.fb.half{border-color:var(--c2)}
+.fb.bad{border-color:var(--bad)}
+.fb .head{font-size:1.2rem;font-weight:800;margin-bottom:4px}
+.fb .pts{float:right;color:var(--neon);font-weight:800}
+.fb .pts.zero{color:var(--muted)}
+.fb .snark{color:var(--muted);font-style:italic;margin:2px 0 8px}
+.fb .ans{margin:8px 0}
+.fb .ans b{color:var(--neon)}
+.explain{background:var(--panel2);border-left:4px solid var(--c3);border-radius:8px;padding:10px 12px;margin:10px 0;line-height:1.45}
+.explain .t{font-weight:700;margin-bottom:4px;color:var(--c3)}
+.explain ul{margin:4px 0 0;padding-left:18px}
+.explain li{margin:3px 0}
+details.more{margin:8px 0}
+details.more summary{color:var(--muted);cursor:pointer}
+.fb .primary{width:100%;margin-top:8px}
+
+/* --- výsledky --- */
+.result{text-align:center;padding:10px 0}
+.result .score{font-size:3rem;font-weight:900;color:var(--neon);text-shadow:0 0 18px rgba(124,255,79,.4)}
+.result .stat{color:var(--muted);margin-bottom:6px}
+.result .msg{font-size:1.25rem;font-weight:700;margin:12px 0 18px}
+.mist{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+.mist .q{color:var(--muted);font-size:.9rem;margin-bottom:6px}
+.mist .yours{color:var(--bad);margin-top:6px}
+.mist .good{color:var(--neon);margin-top:2px;font-weight:700}
+.mist .paper svg.formula{width:calc(var(--fw) * .9px)}
+.result .mwrap{width:96px;margin:0 auto}.result .mascot{width:100%;height:auto}
+
+/* --- história --- */
+.best{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 16px}
+.best div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px}
+.best small{display:block;color:var(--muted)}
+.best b{color:var(--neon);font-size:1.15rem}
+.hrow{display:flex;justify-content:space-between;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:6px 0}
+.hrow small{color:var(--muted);display:block}
+.hrow .p{text-align:right;font-weight:800;color:var(--neon);white-space:nowrap}
+.empty{color:var(--muted);text-align:center;padding:30px 0;font-style:italic}
+.danger{background:transparent;border:2px solid var(--bad);color:var(--bad);border-radius:12px;padding:10px 14px;margin-top:16px;width:100%}
+
+/* --- ťahák --- */
+.cheat section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0;line-height:1.5}
+.cheat h3{margin:0 0 6px;color:var(--neon);font-size:1.08rem}
+.cheat ul,.cheat ol{margin:4px 0;padding-left:20px}
+.cheat code{background:var(--panel2);padding:1px 6px;border-radius:6px;font-family:inherit;font-weight:700;color:var(--c2)}
+.cheat table{border-collapse:collapse;width:100%}
+.cheat td{padding:3px 6px;border-bottom:1px solid var(--line)}
+.cheat .note{border:1px dashed var(--c2);border-radius:10px;padding:8px 10px;color:var(--c2)}
+
+/* --- maskot --- */
+.mascot .f-happy,.mascot .f-dead,.mascot .smoke{display:none}
+.mascot.ok .f-bored,.mascot.boom .f-bored{display:none}
+.mascot.ok .f-happy{display:inline}
+.mascot.boom .f-dead,.mascot.boom .smoke{display:inline}
+.mascot .bub circle{animation:bub 2.6s infinite ease-in;opacity:0}
+.mascot .bub circle:nth-child(2){animation-delay:.9s}
+.mascot .bub circle:nth-child(3){animation-delay:1.7s}
+.mascot.ok .bub circle{animation-duration:.9s}
+@keyframes bub{0%{opacity:0;transform:translateY(0)}20%{opacity:.9}100%{opacity:0;transform:translateY(-30px)}}
+.mascot.boom{animation:shake .45s}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-5px) rotate(-6deg)}40%{transform:translateX(5px) rotate(5deg)}60%{transform:translateX(-3px) rotate(-3deg)}80%{transform:translateX(2px)}}
+.mascot .smoke circle{animation:smoke 1.2s ease-out forwards}
+@keyframes smoke{from{opacity:.9;transform:translateY(0) scale(.6)}to{opacity:0;transform:translateY(-26px) scale(1.4)}}
+.mascot .lid{animation:blink 5s infinite}
+@keyframes blink{0%,92%,100%{transform:none}95%{transform:translateY(5px)}}
+footer{color:var(--muted);text-align:center;font-size:.8rem;margin-top:26px;opacity:.7}
+
+.tools{margin-top:10px}
+#panel:empty{display:none}
+.panel{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:12px;animation:fade .2s ease;line-height:1.45}
+.panel h3{margin:0 0 6px;font-size:1.1rem}
+.panel p{margin:6px 0;color:var(--muted)}
+.panel .acts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.panel .acts button{width:100%}
+.panel ol{margin:6px 0;padding-left:20px}
+.panel .msg{margin-top:10px;font-weight:700;color:var(--neon)}
+.panel .msg.err{color:var(--bad)}
+.panel .x{float:right;background:none;border:0;color:var(--muted);font-size:1.2rem;padding:0 4px}
+.upd{width:100%;margin-top:10px;font-size:.95rem;padding:10px}
+footer .ver{display:block;margin-top:4px;font-size:.72rem}
+
+/* ===== ružovo-fialová téma: „nenávidím chémiu“ ===== */
+:root{
+  --bg:#13071a; --panel:#211029; --panel2:#2c1536; --line:#43204f;
+  --neon:#ff4fa3; --text:#fde9f4; --muted:#bb9cb4;
+  --c0:#ff4fa3; --c1:#b56bff; --c2:#ffb86b; --c3:#7aa8ff;
+  --bad:#ff3d6e; --paper:#fff5fa; --ink:#2a1030;
+}
+body{
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(1200px 600px at 10% -10%, rgba(255,79,163,.18), transparent 60%),
+    radial-gradient(900px 600px at 110% 20%, rgba(181,107,255,.16), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23ff4fa3' stroke-opacity='.08' stroke-width='1.6'%3E%3Cpath d='M30 6 L51 18 L51 42 L30 54 L9 42 L9 18 Z'/%3E%3Cpath d='M17 16 L43 44 M43 16 L17 44' stroke='%23b56bff' stroke-opacity='.10'/%3E%3Cpath d='M86 70 l10 10 m0 -10 l-10 10' stroke-opacity='.13'/%3E%3Ccircle cx='92' cy='26' r='3'/%3E%3Ccircle cx='24' cy='92' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment:fixed;
+}
+.tape{position:relative;margin:-16px -14px 14px;height:30px;overflow:hidden;
+  background:repeating-linear-gradient(-45deg,#ff4fa3 0 16px,#13071a 16px 32px);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(255,79,163,.25)}
+.tape span{background:#13071a;color:#ff4fa3;font-weight:900;font-size:.72rem;letter-spacing:.14em;padding:4px 10px;border-radius:4px;white-space:nowrap}
+.hero{position:relative}
+.logo-wrap{position:relative;display:inline-block}
+h1.logo{color:transparent;background:linear-gradient(90deg,#ff4fa3,#d77dff 55%,#b56bff);-webkit-background-clip:text;background-clip:text;text-shadow:none;filter:drop-shadow(0 0 16px rgba(255,79,163,.45));position:relative}
+.logo-wrap::after{content:"";position:absolute;left:-6%;right:-6%;top:58%;height:7px;border-radius:6px;background:#fde9f4;transform:rotate(-6deg);box-shadow:0 0 12px rgba(255,255,255,.35);opacity:.92}
+.sticker{position:absolute;right:-56px;top:-4px;transform:rotate(14deg);background:#ffe14f;color:#2a1030;font-weight:900;font-size:.85rem;padding:5px 9px;border-radius:8px;box-shadow:0 3px 0 #b8941d,0 6px 14px rgba(0,0,0,.35);animation:wob 3s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(14deg)}50%{transform:rotate(8deg) scale(1.05)}}
+.hate{display:block;margin:-6px auto 16px;max-width:330px;color:#ffc2e2;font-size:.93rem;min-height:2.6em}
+.hate b{color:var(--neon)}
+.dedic{border:1px dashed rgba(255,79,163,.5);background:rgba(255,79,163,.06)}
+.big{background:linear-gradient(160deg,var(--panel),#1a0b22)}
+.big:hover{border-color:var(--neon);box-shadow:0 0 18px rgba(255,79,163,.25)}
+.primary{background:linear-gradient(135deg,#ff4fa3,#b56bff);color:#fff;box-shadow:0 6px 18px rgba(255,79,163,.3)}
+.timer>i{background:linear-gradient(90deg,#b56bff,#ff4fa3)}
+.prompt .name{color:#ff7bbd}
+.opt.right{box-shadow:0 0 24px rgba(255,79,163,.55)}
+.opt.right .mark{background:#ff4fa3;color:#fff}
+.fb .pts{color:#ff7bbd}
+.fb.ok{border-color:#ff4fa3}
+.explain{border-left-color:var(--c1)}
+.explain .t{color:#d7a6ff}
+.result .score{color:transparent;background:linear-gradient(90deg,#ff4fa3,#b56bff);-webkit-background-clip:text;background-clip:text;text-shadow:none}
+.best b,.hrow .p{color:#ff7bbd}
+.cheat h3{color:#ff7bbd}
+footer{opacity:.85}
+.hero .mascot{display:block;margin:0 auto}
+.logo-wrap{margin-top:2px}
+.logo-wrap::after{height:5px;opacity:.8;top:56%}
+.sticker{right:-40px;top:-6px}
+
+</style>
+<script>window.CHEMIA_VERSION='18. 11. 2026 16:21'</script>
+<script>window.CHEMIA_DEDIC=true</script>
+</head>
+<body>
+<div class="app">
+<div class="tape"><span>⚠ TOXICKÉ UČIVO · VSTUP NA VLASTNÉ RIZIKO ⚠</span></div>
+
+<!-- DOMOV -->
+<section id="home" class="screen on">
+  <div class="hero">
+    <svg class="mascot" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+ <g class="smoke" fill="#9aa59c"><circle cx="48" cy="10" r="9"/><circle cx="64" cy="4" r="11"/><circle cx="78" cy="12" r="8"/></g>
+ <path d="M46 14 h28 v32 l30 60 a14 14 0 0 1 -12.5 21 h-63 a14 14 0 0 1 -12.5 -21 l30 -60 z" fill="#2a1030"/>
+ <path d="M27.5 92 q8 -6 16 0 t16 0 t16 0 t16 0 l7 13 a10 10 0 0 1 -9 15 h-66 a10 10 0 0 1 -9 -15 z" fill="#ff4fa3" opacity=".9"/>
+ <g class="bub" fill="#ffd1e8"><circle cx="45" cy="108" r="3"/><circle cx="62" cy="112" r="2.4"/><circle cx="76" cy="106" r="3.2"/></g>
+ <path d="M46 14 h28 v32 l30 60 a14 14 0 0 1 -12.5 21 h-63 a14 14 0 0 1 -12.5 -21 l30 -60 z" fill="none" stroke="#ff4fa3" stroke-width="4" stroke-linejoin="round"/>
+ <rect x="42" y="8" width="36" height="9" rx="4" fill="#ff4fa3"/>
+ <g class="f-bored"><path d="M41 57 L57 64 M79 57 L63 64" stroke="#fde9f4" stroke-width="3.2" stroke-linecap="round"/>
+  <circle cx="50" cy="70" r="7" fill="#fff"/><circle cx="70" cy="70" r="7" fill="#fff"/>
+  <circle cx="51" cy="72" r="3" fill="#111"/><circle cx="71" cy="72" r="3" fill="#111"/>
+  <g class="lid"><rect x="42" y="62" width="16" height="8" fill="#2a1030"/><rect x="62" y="62" width="16" height="8" fill="#2a1030"/></g>
+  <line x1="43" y1="70" x2="57" y2="70" stroke="#ff4fa3" stroke-width="2"/><line x1="63" y1="70" x2="77" y2="70" stroke="#ff4fa3" stroke-width="2"/>
+  <path d="M53 84 q7 -2 14 0" stroke="#e6efe6" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+ </g>
+ <g class="f-happy" stroke="#e6efe6" stroke-width="3" fill="none" stroke-linecap="round">
+  <path d="M44 72 q6 -8 12 0"/><path d="M64 72 q6 -8 12 0"/><path d="M52 81 q8 7 16 0"/>
+ </g>
+ <g class="f-dead" stroke="#ff5c5c" stroke-width="3" stroke-linecap="round" fill="none">
+  <path d="M45 65 l10 10 M55 65 l-10 10"/><path d="M65 65 l10 10 M75 65 l-10 10"/>
+  <ellipse cx="60" cy="85" rx="5" ry="4" fill="#0a0e0b" stroke="#e6efe6" stroke-width="2"/>
+ </g>
+<text x="86" y="44" font-size="22">💢</text></svg>
+    <div class="logo-wrap"><h1 class="logo">chémia</h1><span class="sticker">FUJ!</span></div>
+    <p class="tag">Prežiť alkény. Nič viac nežiadame.</p><span class="hate" id="hate"></span>
+    <p class="dedic" id="dedic">Od ocina pre dcéru 👸🏿<br>Odteraz aspoň trojky 🤞</p>
+  </div>
+  <button class="big" data-test="1"><span class="badge">🧪</span><span class="bt">Vzorec → názov</span><span class="bs">Pozri vzorec, vymysli meno. Raz klikáš, raz píšeš.</span></button>
+  <button class="big" data-test="2"><span class="badge">🔬</span><span class="bt">Názov → vzorec</span><span class="bs">Máš meno, nájdi ten správny vzorec zo štyroch.</span></button>
+  <button class="big" data-test="3"><span class="badge">🤬</span><span class="bt">Dopipiny, oboje!</span><span class="bs">Raz vzorec, raz názov. Chémia útočí zo všetkých strán a ty sa bráň, ako vieš.</span></button>
+  <div class="row">
+    <button class="ghost" id="btnHist">📜 Záznam utrpenia</button>
+    <button class="ghost" id="btnCheat">📄 Ťahák</button>
+  </div>
+  <div class="row tools">
+    <button class="ghost" id="btnBackup">💾 Zálohovať</button>
+    <button class="ghost" id="btnInstall">📲 Nainštalovať</button>
+  </div>
+  <div id="panel"></div>
+  <button class="ghost upd" id="btnUpdate">🔄 Aktualizovať apku</button>
+  <input type="file" id="restoreFile" accept=".json,application/json" hidden>
+  <footer>Vyrobené s 💜 k dcére a 💔 k chémii<span class="ver" id="ver"></span></footer>
+</section>
+
+<!-- OBŤAŽNOSŤ -->
+<section id="diff" class="screen">
+  <button class="back" data-go="home">← späť</button>
+  <h2 id="diffTitle"></h2>
+  <p class="sub">Vyber si mieru utrpenia. 10 otázok, čas beží.</p>
+  <div id="diffList"></div>
+</section>
+
+<!-- KVÍZ -->
+<section id="quiz" class="screen">
+  <div class="qtop">
+    <svg class="mascot mini" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+ <g class="smoke" fill="#9aa59c"><circle cx="48" cy="10" r="9"/><circle cx="64" cy="4" r="11"/><circle cx="78" cy="12" r="8"/></g>
+ <path d="M46 14 h28 v32 l30 60 a14 14 0 0 1 -12.5 21 h-63 a14 14 0 0 1 -12.5 -21 l30 -60 z" fill="#2a1030"/>
+ <path d="M27.5 92 q8 -6 16 0 t16 0 t16 0 t16 0 l7 13 a10 10 0 0 1 -9 15 h-66 a10 10 0 0 1 -9 -15 z" fill="#ff4fa3" opacity=".9"/>
+ <g class="bub" fill="#ffd1e8"><circle cx="45" cy="108" r="3"/><circle cx="62" cy="112" r="2.4"/><circle cx="76" cy="106" r="3.2"/></g>
+ <path d="M46 14 h28 v32 l30 60 a14 14 0 0 1 -12.5 21 h-63 a14 14 0 0 1 -12.5 -21 l30 -60 z" fill="none" stroke="#ff4fa3" stroke-width="4" stroke-linejoin="round"/>
+ <rect x="42" y="8" width="36" height="9" rx="4" fill="#ff4fa3"/>
+ <g class="f-bored"><path d="M41 57 L57 64 M79 57 L63 64" stroke="#fde9f4" stroke-width="3.2" stroke-linecap="round"/>
+  <circle cx="50" cy="70" r="7" fill="#fff"/><circle cx="70" cy="70" r="7" fill="#fff"/>
+  <circle cx="51" cy="72" r="3" fill="#111"/><circle cx="71" cy="72" r="3" fill="#111"/>
+  <g class="lid"><rect x="42" y="62" width="16" height="8" fill="#2a1030"/><rect x="62" y="62" width="16" height="8" fill="#2a1030"/></g>
+  <line x1="43" y1="70" x2="57" y2="70" stroke="#ff4fa3" stroke-width="2"/><line x1="63" y1="70" x2="77" y2="70" stroke="#ff4fa3" stroke-width="2"/>
+  <path d="M53 84 q7 -2 14 0" stroke="#e6efe6" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+ </g>
+ <g class="f-happy" stroke="#e6efe6" stroke-width="3" fill="none" stroke-linecap="round">
+  <path d="M44 72 q6 -8 12 0"/><path d="M64 72 q6 -8 12 0"/><path d="M52 81 q8 7 16 0"/>
+ </g>
+ <g class="f-dead" stroke="#ff5c5c" stroke-width="3" stroke-linecap="round" fill="none">
+  <path d="M45 65 l10 10 M55 65 l-10 10"/><path d="M65 65 l10 10 M75 65 l-10 10"/>
+  <ellipse cx="60" cy="85" rx="5" ry="4" fill="#0a0e0b" stroke="#e6efe6" stroke-width="2"/>
+ </g>
+<text x="86" y="44" font-size="22">💢</text></svg>
+    <div class="qinfo"><span id="qNum"></span><span><span class="streak" id="qStreak"></span> <span id="qScore"></span></span></div>
+  </div>
+  <div class="timer" id="timer"><i id="timerBar"></i></div>
+  <div class="prompt" id="prompt"></div>
+  <div id="answers"></div>
+  <div id="feedback"></div>
+</section>
+
+<!-- VÝSLEDOK -->
+<section id="results" class="screen">
+  <div class="result" id="resultBox"></div>
+  <div class="row"><button class="primary" id="btnAgain">Ešte raz</button><button class="ghost" data-go="home">Domov</button></div>
+  <div id="mistakes"></div>
+</section>
+
+<!-- HISTÓRIA -->
+<section id="history" class="screen">
+  <button class="back" data-go="home">← späť</button>
+  <h2>Záznam utrpenia</h2>
+  <p class="sub">Body z každého dokončeného testu. Ukladá sa len v tomto zariadení.</p>
+  <div id="histBox"></div>
+</section>
+
+<!-- ŤAHÁK -->
+<section id="cheat" class="screen cheat">
+  <button class="back" data-go="home">← späť</button>
+  <h2>Ťahák</h2>
+  <p class="sub">Keď už fakt nevieš. (V teste ho nepoužívaj, chémia to vidí.)</p>
+  <section><h3>Čo sú alkény</h3>
+    <ul><li>Nenasýtené uhľovodíky – majú aspoň jednu <b>dvojitú väzbu C=C</b>.</li>
+    <li>S jednou dvojitou väzbou: všeobecný vzorec <code>CₙH₂ₙ</code>.</li>
+    <li>Pri dvojitej väzbe je molekula plochá (trigonálna, 120°).</li></ul></section>
+  <section><h3>Kmene podľa počtu uhlíkov</h3>
+    <table><tr><td>2 et</td><td>3 prop</td><td>4 but</td><td>5 pent</td></tr><tr><td>6 hex</td><td>7 hept</td><td>8 okt</td><td>9 non</td></tr><tr><td>10 dek</td><td></td><td></td><td></td></tr></table></section>
+  <section><h3>Ako sa skladá názov</h3>
+    <p><code>vetvy podľa abecedy</code> + <code>kmeň</code> + <code>lokanty</code> + <code>-én</code></p>
+    <ul><li>Jedna dvojitá väzba: <b>hex-2-én</b></li>
+    <li>Dve: <b>buta-1,3-dién</b> (za kmeň sa pridáva <b>a</b>), tri: <b>okta-1,3,5-trién</b></li>
+    <li>Rovnaké vetvy: di-, tri-, tetra- → <b>2,3-dimetyl</b>. Pri abecede sa nerátajú.</li>
+    <li>Príklad: <b>5-etyl-3,4-dimetylhept-2-én</b></li></ul></section>
+  <section><h3>1. Hlavný reťazec</h3>
+    <ol><li>čo najviac uhlíkov,</li><li>obsahuje čo najviac dvojitých väzieb,</li><li>pri zhode: najnižšie lokanty, potom čo najviac vetiev.</li></ol>
+    <p>Pozor: reťazec nemusí ísť „rovno“ – často pokračuje cez to, čo vyzerá ako vetva.</p></section>
+  <section><h3>2. Číslovanie</h3>
+    <ol><li>dvojitá väzba dostane čo najnižšie číslo,</li><li>potom čo najnižšie čísla vetiev,</li><li>ak je stále zhoda, nižšie číslo dostane vetva skôr v abecede.</li></ol>
+    <p class="note">Dvojitá väzba musí byť čo najbližšie k najmenšiemu číslu!</p>
+    <p>Lokant dvojitej väzby = nižšie z dvoch čísel: C2=C3 → <b>-2-én</b>.</p></section>
+  <section><h3>Vetvy</h3>
+    <table><tr><td>metyl</td><td>–CH₃</td></tr><tr><td>etyl</td><td>–CH₂–CH₃</td></tr><tr><td>propyl</td><td>–CH₂–CH₂–CH₃</td></tr><tr><td>izopropyl</td><td>–CH(CH₃)₂</td></tr><tr><td>vinyl (etenyl)</td><td>–CH=CH₂</td></tr></table>
+    <p>Abeceda: etyl → izopropyl → metyl → propyl → vinyl</p></section>
+  <section><h3>Cykloalkény</h3>
+    <ul><li>Kruh = predpona <b>cyklo-</b>: cyklopentén, cyklohexén.</li>
+    <li>Dvojitá väzba je vždy <b>C1=C2</b>, ďalej čísluj smerom k vetvám: <b>3-metylcyklohex-1-én</b>.</li>
+    <li>Dve väzby: <b>cyklohexa-1,3-dién</b>.</li></ul></section>
+  <section><h3>cis / trans</h3>
+    <ul><li>Existuje, keď je dvojitá väzba vnútri reťazca (od C4, napr. but-2-én).</li>
+    <li><b>cis</b> – reťazec pokračuje na <b>tú istú stranu</b> dvojitej väzby.</li>
+    <li><b>trans</b> – na <b>opačné strany</b> (krížom).</li></ul></section>
+</section>
+
+</div>
+<script>/* ===== chémia – jadro: generovanie a názvoslovie alkénov ===== */
+(function (root) {
+'use strict';
+
+const STEM = {2:'et',3:'prop',4:'but',5:'pent',6:'hex',7:'hept',8:'okt',9:'non',10:'dek',11:'undek',12:'dodek'};
+const MULT = ['', '', 'di', 'tri', 'tetra', 'penta'];
+const MULT_WORD = {2:'dve',3:'tri',4:'štyri'};
+
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const num = (a, b) => a - b;
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+/* ---------- graf ---------- */
+function G() { return { n: 0, adj: [] }; }
+function addAtom(g) { g.adj.push([]); return g.n++; }
+function bond(g, a, b, o) { g.adj[a].push([b, o]); g.adj[b].push([a, o]); }
+function order(g, a, b) { for (const [x, o] of g.adj[a]) if (x === b) return o; return 0; }
+function valence(g, a) { return g.adj[a].reduce((s, e) => s + e[1], 0); }
+function validG(g) { for (let a = 0; a < g.n; a++) if (valence(g, a) > 4) return false; return true; }
+
+function attach(g, at, type) {
+  let a, b, c;
+  switch (type) {
+    case 'metyl': a = addAtom(g); bond(g, at, a, 1); break;
+    case 'etyl': a = addAtom(g); b = addAtom(g); bond(g, at, a, 1); bond(g, a, b, 1); break;
+    case 'propyl': a = addAtom(g); b = addAtom(g); c = addAtom(g); bond(g, at, a, 1); bond(g, a, b, 1); bond(g, b, c, 1); break;
+    case 'izopropyl': a = addAtom(g); b = addAtom(g); c = addAtom(g); bond(g, at, a, 1); bond(g, a, b, 1); bond(g, a, c, 1); break;
+    case 'vinyl': a = addAtom(g); b = addAtom(g); bond(g, at, a, 1); bond(g, a, b, 2); break;
+  }
+}
+
+function buildChain(spec) {
+  const g = G(); const chain = [];
+  for (let i = 0; i < spec.L; i++) chain.push(addAtom(g));
+  for (let i = 0; i < spec.L - 1; i++) bond(g, chain[i], chain[i + 1], spec.dbs.includes(i + 1) ? 2 : 1);
+  for (const s of spec.subs) attach(g, chain[s.pos - 1], s.type);
+  return { g, chain };
+}
+function buildRing(spec) {
+  const g = G(); const ring = [];
+  for (let i = 0; i < spec.n; i++) ring.push(addAtom(g));
+  for (let i = 0; i < spec.n; i++) bond(g, ring[i], ring[(i + 1) % spec.n], spec.dbs.includes(i) ? 2 : 1);
+  for (const s of spec.subs) attach(g, ring[s.v], s.type);
+  return { g, ring };
+}
+
+/* ---------- rozpoznanie vetiev ---------- */
+function subtree(g, start, from) {
+  const out = [], st = [[start, from]];
+  while (st.length) { const [a, p] = st.pop(); out.push(a); for (const [b] of g.adj[a]) if (b !== p) st.push([b, a]); }
+  return out;
+}
+function classify(g, start, from) {
+  const t = subtree(g, start, from);
+  const kids = g.adj[start].filter(e => e[0] !== from);
+  if (t.length === 1) return 'metyl';
+  if (t.length === 2) { const o = kids[0][1]; return o === 1 ? 'etyl' : o === 2 ? 'vinyl' : null; }
+  if (t.length === 3) {
+    if (kids.length === 2 && kids.every(e => e[1] === 1 && g.adj[e[0]].length === 1)) return 'izopropyl';
+    if (kids.length === 1 && kids[0][1] === 1) {
+      const b = kids[0][0]; const k2 = g.adj[b].filter(e => e[0] !== start);
+      if (k2.length === 1 && k2[0][1] === 1) return 'propyl';
+    }
+  }
+  return null;
+}
+
+/* ---------- reťazce ---------- */
+function pathBetween(g, a, b) {
+  const prev = new Array(g.n).fill(-2); prev[a] = -1; const q = [a];
+  while (q.length) { const x = q.shift(); if (x === b) break; for (const [y] of g.adj[x]) if (prev[y] === -2) { prev[y] = x; q.push(y); } }
+  const p = []; for (let x = b; x !== -1; x = prev[x]) p.push(x); return p.reverse();
+}
+function leafPaths(g) {
+  const leaves = []; for (let a = 0; a < g.n; a++) if (g.adj[a].length <= 1) leaves.push(a);
+  const paths = [];
+  for (let i = 0; i < leaves.length; i++) for (let j = i + 1; j < leaves.length; j++) paths.push(pathBetween(g, leaves[i], leaves[j]));
+  return paths;
+}
+function analyze(g, path) {
+  const set = new Set(path), L = path.length, db = [], subs = []; let ok = true;
+  for (let i = 0; i < L - 1; i++) if (order(g, path[i], path[i + 1]) === 2) db.push(i + 1);
+  path.forEach((a, i) => {
+    for (const [b, o] of g.adj[a]) if (!set.has(b)) {
+      const c = o === 1 ? classify(g, b, a) : null;
+      if (!c) ok = false; else subs.push({ pos: i + 1, name: c });
+    }
+  });
+  return { path, L, db, subs, ok };
+}
+function reverseInfo(info) {
+  const L = info.L;
+  return { path: info.path.slice().reverse(), L, db: info.db.map(d => L - d).sort(num), subs: info.subs.map(s => ({ pos: L + 1 - s.pos, name: s.name })), ok: info.ok };
+}
+function keyOf(info) {
+  return {
+    dbL: info.db.slice().sort(num),
+    n: info.subs.length,
+    sl: info.subs.map(s => s.pos).sort(num),
+    alpha: info.subs.slice().sort((x, y) => x.name < y.name ? -1 : x.name > y.name ? 1 : x.pos - y.pos).map(s => s.pos)
+  };
+}
+function cmpArr(a, b) { for (let i = 0; i < Math.min(a.length, b.length); i++) if (a[i] !== b[i]) return a[i] - b[i]; return a.length - b.length; }
+function cmpKey(a, b) {
+  let c = cmpArr(a.dbL, b.dbL); if (c) return c;
+  if (a.n !== b.n) return b.n - a.n;
+  c = cmpArr(a.sl, b.sl); if (c) return c;
+  return cmpArr(a.alpha, b.alpha);
+}
+function bestOrient(info) { const r = reverseInfo(info); return cmpKey(keyOf(info), keyOf(r)) <= 0 ? info : r; }
+
+function groupsOf(subs, rename) {
+  const m = new Map();
+  for (const s of subs) { const nm = (rename && rename[s.name]) || s.name; if (!m.has(nm)) m.set(nm, []); m.get(nm).push(s.pos); }
+  return [...m.entries()].sort((a, b) => a[0] < b[0] ? -1 : 1).map(([name, locs]) => ({ name, locs: locs.sort(num) }));
+}
+
+/* ---------- skladanie názvu ---------- */
+function prefixStr(groups, o) {
+  let gs = groups.slice(); if (o.unsorted) gs.reverse();
+  return gs.map(g => g.locs.join(',') + '-' + (o.noMult ? '' : MULT[g.locs.length]) + g.name).join('-');
+}
+function coreStr(p, o) {
+  const k = p.db.length;
+  const stem = (p.ring && !o.noCyklo ? 'cyklo' : '') + STEM[p.L];
+  const sk = o.suffixK || k;
+  if (o.an) return stem + 'án';
+  if (k === 1) {
+    if (p.ring) return (p.groups.length || o.forceLoc) && !o.noLoc ? stem + '-' + p.db[0] + '-én' : stem + 'én';
+    if (p.L === 2) return 'etén';
+    if (o.noLoc) return stem + 'én';
+    return stem + '-' + p.db[0] + '-' + MULT[sk] + 'én';
+  }
+  return stem + (o.noA ? '' : 'a') + '-' + p.db.join(',') + '-' + MULT[sk] + 'én';
+}
+function fmt(p, o) {
+  o = o || {};
+  const groups = o.groups || p.groups;
+  let s = (groups.length ? prefixStr(groups, o) : '') + coreStr(p, o);
+  if (p.ct) { const cis = o.flipCT ? !p.cis : p.cis; if (!o.noCT) s = (cis ? 'cis-' : 'trans-') + s; }
+  return s;
+}
+
+function partsFromInfo(info, ring) {
+  return { ring: !!ring, L: info.L, db: info.db.slice().sort(num), groups: groupsOf(info.subs), subs: info.subs };
+}
+
+/* ---------- pomenovanie ---------- */
+function nameAcyclic(g) {
+  const paths = g.n === 1 ? [[0]] : leafPaths(g);
+  const infos = paths.map(p => analyze(g, p));
+  const Lmax = Math.max(...infos.map(i => i.L));
+  const Dmax = Math.max(...infos.map(i => i.db.length));
+  const Lold = Math.max(...infos.filter(i => i.db.length === Dmax).map(i => i.L));
+  const Dnew = Math.max(...infos.filter(i => i.L === Lmax).map(i => i.db.length));
+  if (Lold !== Lmax || Dnew !== Dmax) return { ok: false, reason: 'spor' };
+  if (Dmax === 0) return { ok: false, reason: 'alkan' };
+  const cands = infos.filter(i => i.L === Lmax && i.db.length === Dmax);
+  if (cands.some(c => !c.ok)) return { ok: false, reason: 'vetva' };
+  let best = null;
+  for (const c of cands) for (const o of [c, reverseInfo(c)]) if (!best || cmpKey(keyOf(o), keyOf(best)) < 0) best = o;
+  const parts = partsFromInfo(best);
+  return { ok: true, parts, best, infos: infos.filter(i => i.ok), name: fmt(parts) };
+}
+function ringNumberings(g, ring) {
+  const n = ring.length, set = new Set(ring), res = [];
+  for (let s = 0; s < n; s++) for (const dir of [1, -1]) {
+    const numb = new Map();
+    for (let k = 0; k < n; k++) numb.set(ring[((s + dir * k) % n + n) % n], k + 1);
+    const db = [], subs = []; let ok = true;
+    for (let i = 0; i < n; i++) {
+      const a = ring[i], b = ring[(i + 1) % n];
+      if (order(g, a, b) === 2) { const p = numb.get(a), q = numb.get(b); db.push(Math.abs(p - q) === 1 ? Math.min(p, q) : Math.max(p, q)); }
+    }
+    for (const a of ring) for (const [b, o] of g.adj[a]) if (!set.has(b)) {
+      const c = o === 1 ? classify(g, b, a) : null; if (!c) ok = false; else subs.push({ pos: numb.get(a), name: c });
+    }
+    db.sort(num);
+    res.push({ L: n, db, subs, ok, start: s, dir });
+  }
+  return res;
+}
+function nameRing(g, ring) {
+  const nums = ringNumberings(g, ring);
+  if (nums.some(x => !x.ok)) return { ok: false, reason: 'vetva' };
+  let best = null; for (const x of nums) if (!best || cmpKey(keyOf(x), keyOf(best)) < 0) best = x;
+  const parts = partsFromInfo(best, true);
+  return { ok: true, parts, best, nums, name: fmt(parts) };
+}
+
+/* ---------- molekuly ---------- */
+function makeMol(kind, spec, diff) {
+  let m;
+  if (kind === 'chain') {
+    const b = buildChain(spec); if (!validG(b.g)) return null;
+    const r = nameAcyclic(b.g); if (!r.ok) return null;
+    if (!STEM[r.parts.L] || r.parts.L > 10) return null;
+    m = { kind, spec, g: b.g, naming: r, parts: r.parts, name: r.name };
+  } else if (kind === 'ring') {
+    const b = buildRing(spec); if (!validG(b.g)) return null;
+    const r = nameRing(b.g, b.ring); if (!r.ok) return null;
+    m = { kind, spec, g: b.g, ring: b.ring, naming: r, parts: r.parts, name: r.name };
+  } else {
+    const b = buildChain({ L: spec.L, dbs: [spec.p], subs: [] });
+    const p = Math.min(spec.p, spec.L - spec.p);
+    const parts = { ct: true, ring: false, L: spec.L, db: [p], groups: [], subs: [], cis: spec.cis };
+    m = { kind, spec, g: b.g, parts, name: fmt(parts) };
+  }
+  m.diff = diff;
+  m.aliases = aliasesOf(m);
+  m.carbons = m.g.n;
+  return m;
+}
+
+function aliasesOf(m) {
+  const p = m.parts, out = new Set([m.name]);
+  if (m.kind === 'ct') {
+    const core = fmt(p, { noCT: true });
+    const zl = p.cis ? 'z' : 'e';
+    out.add('(' + zl + ')-' + core); out.add(zl + '-' + core);
+    return [...out];
+  }
+  if (p.ring) {
+    if (p.db.length === 1) { out.add(fmt(p, { forceLoc: true })); out.add(fmt(p, { noLoc: true })); }
+  } else {
+    if (p.L === 3 && p.db.length === 1) out.add(fmt(p, { noLoc: true }));
+    if (p.subs.some(s => s.name === 'vinyl')) {
+      const gr = groupsOf(p.subs, { vinyl: 'etenyl' });
+      out.add(fmt(p, { groups: gr }));
+    }
+  }
+  const triv = { 'etén': ['etylén'], 'prop-1-én': ['propylén', 'propén'], 'buta-1,3-dién': ['butadién'], '2-metylbuta-1,3-dién': ['izoprén'] };
+  if (triv[m.name]) triv[m.name].forEach(t => out.add(t));
+  return [...out];
+}
+
+/* ---------- generátory ---------- */
+function sampleDbs(L, k) {
+  for (let t = 0; t < 50; t++) {
+    const s = new Set(); while (s.size < k) s.add(rnd(1, L - 1));
+    const a = [...s].sort(num); let ok = true;
+    for (let i = 1; i < a.length; i++) if (a[i] - a[i - 1] < 2) ok = false;
+    if (ok) return a;
+  }
+  return null;
+}
+function genChainSpec(L, k, nSubs, types) {
+  const dbs = sampleDbs(L, k); if (!dbs) return null;
+  const subs = [];
+  for (let j = 0; j < nSubs; j++) { if (L < 3) break; subs.push({ pos: rnd(2, L - 1), type: pick(types) }); }
+  return { L, dbs, subs };
+}
+function genRingSpec(n, k, nSubs, types) {
+  let dbs = [0];
+  if (k === 2) dbs = n >= 6 && Math.random() < 0.35 ? [0, 3] : [0, 2];
+  const subs = []; for (let j = 0; j < nSubs; j++) subs.push({ v: rnd(0, n - 1), type: pick(types) });
+  return { n, dbs, subs, rot: Math.random() };
+}
+function genCTSpec() {
+  const opts = [];
+  for (let L = 4; L <= 7; L++) for (let p = 2; p <= L - 2; p++) if (p - 1 <= 3 && L - p - 1 <= 3) opts.push([L, p]);
+  const [L, p] = pick(opts);
+  return { L, p, cis: Math.random() < 0.5, flipV: Math.random() < 0.5 };
+}
+
+function genOne(diff) {
+  const r = Math.random();
+  if (diff === 'easy') {
+    if (r < 0.72) { const L = rnd(2, 7); return makeMol('chain', { L, dbs: [rnd(1, L - 1)], subs: [] }, diff); }
+    return makeMol('ring', genRingSpec(pick([4, 5, 5, 6, 6]), 1, 0, []), diff);
+  }
+  if (diff === 'medium') {
+    if (r < 0.45) {
+      const sp = genChainSpec(rnd(4, 7), 1, rnd(1, 3), ['metyl', 'metyl', 'metyl', 'etyl']); if (!sp) return null;
+      const m = makeMol('chain', sp, diff); return m && m.parts.subs.length ? m : null;
+    }
+    if (r < 0.65) {
+      const sp = genChainSpec(rnd(4, 8), 2, Math.random() < 0.4 ? 1 : 0, ['metyl']); if (!sp) return null;
+      const m = makeMol('chain', sp, diff); return m && m.parts.db.length === 2 ? m : null;
+    }
+    return makeMol('ring', genRingSpec(pick([4, 5, 6, 6]), 1, rnd(1, 2), ['metyl', 'metyl', 'etyl']), diff);
+  }
+  // hard
+  if (r < 0.4) {
+    const L = rnd(5, 9), k = L >= 7 && Math.random() < 0.3 ? 3 : 2;
+    const sp = genChainSpec(L, k, rnd(1, 3), ['metyl', 'metyl', 'etyl', 'propyl', 'izopropyl', 'vinyl']); if (!sp) return null;
+    const m = makeMol('chain', sp, diff); return m && m.parts.db.length >= 2 && m.parts.subs.length ? m : null;
+  }
+  if (r < 0.6) {
+    const sp = genChainSpec(rnd(6, 9), 1, rnd(2, 3), ['metyl', 'etyl', 'propyl', 'izopropyl', 'vinyl']); if (!sp) return null;
+    const m = makeMol('chain', sp, diff); return m && m.parts.subs.length >= 2 ? m : null;
+  }
+  if (r < 0.8) {
+    const k = Math.random() < 0.5 ? 2 : 1; const n = k === 2 ? pick([5, 6, 6, 7]) : pick([5, 6, 6, 7]);
+    return makeMol('ring', genRingSpec(n, k, rnd(1, 3), ['metyl', 'etyl', 'izopropyl']), diff);
+  }
+  return makeMol('ct', genCTSpec(), diff);
+}
+
+function generate(diff, avoid) {
+  for (let t = 0; t < 400; t++) {
+    const d = diff === 'mix' ? pick(['easy', 'medium', 'hard']) : diff;
+    const m = genOne(d);
+    if (!m) continue;
+    if (m.name.length > 46 || m.carbons > 15) continue;
+    if (avoid && avoid.has(m.name)) continue;
+    if (root.ChemRender && !root.ChemRender.prepare(m)) continue;
+    return m;
+  }
+  return null;
+}
+
+/* ---------- vysvetlenia ---------- */
+const locList = a => a.join(',');
+function dbText(p) { return p.db.map(d => 'C' + d + '=C' + (p.ring && d === p.L ? 1 : d + 1)).join(' a '); }
+
+function breakdown(m) {
+  const p = m.parts, lines = [];
+  if (m.kind === 'ct') {
+    lines.push('Hlavný reťazec: ' + p.L + ' C → „' + STEM[p.L] + '“, dvojitá väzba ' + dbText(p) + ' → „-' + p.db[0] + '-én“.');
+    lines.push(p.cis ? 'Reťazec pokračuje z oboch uhlíkov dvojitej väzby na tú istú stranu → cis.' : 'Reťazec pokračuje z uhlíkov dvojitej väzby na opačné strany → trans.');
+    return lines;
+  }
+  if (p.ring) {
+    lines.push('Uhlíky tvoria kruh s ' + p.L + ' atómami → „cyklo' + STEM[p.L] + '“.');
+    lines.push('Číslovanie začína na dvojitej väzbe (C1=C2)' + (p.groups.length ? ' a pokračuje smerom, kde dostanú vetvy čo najnižšie čísla.' : '.'));
+    if (p.db.length > 1) lines.push('Dvojité väzby: ' + dbText(p) + ' → „-' + locList(p.db) + '-dién“.');
+  } else {
+    lines.push('Hlavný reťazec: ' + p.L + ' C → „' + STEM[p.L] + '“' + (p.db.length > 1 ? ', obsahuje všetky ' + (MULT_WORD[p.db.length] || p.db.length) + ' dvojité väzby.' : (p.L > 2 ? ', je najdlhší a obsahuje dvojitú väzbu.' : '.')));
+    if (p.L > 2) {
+      lines.push('Číslujeme od konca, ku ktorému je dvojitá väzba bližšie.');
+      lines.push('Dvojitá väzba: ' + dbText(p) + ' → „' + (p.db.length > 1 ? 'a-' : '-') + locList(p.db) + '-' + MULT[p.db.length] + 'én“.');
+    }
+  }
+  if (p.groups.length) {
+    lines.push('Vetvy: ' + p.groups.map(g => MULT[g.locs.length] + g.name + ' na C' + g.locs.join(', C')).join('; ') + '.');
+    if (p.groups.length > 1) lines.push('Predpony píšeme podľa abecedy (di-, tri- sa nerátajú): ' + p.groups.map(g => g.name).join(', ') + '.');
+  }
+  return lines;
+}
+
+function nameDistractors(m) {
+  const p = m.parts, correct = m.name, out = [];
+  const seen = new Set(m.aliases.map(normalize));
+  const add = (text, why, pri) => { const k = normalize(text); if (seen.has(k)) return; seen.add(k); out.push({ text, why, pri }); };
+  const k = p.db.length;
+
+  if (m.kind === 'ct') {
+    add(fmt(p, { flipCT: true }), p.cis
+      ? 'Pozri sa, kam pokračuje reťazec z oboch uhlíkov dvojitej väzby: na tú istú stranu → cis (trans by bolo na opačné strany).'
+      : 'Reťazec pokračuje z uhlíkov dvojitej väzby na opačné strany → trans (cis = na tú istú stranu).', 1);
+    add(fmt(p, { noCT: true }), 'Dvojitá väzba je vnútri reťazca, takže existujú dva izoméry – treba uviesť cis alebo trans.', 1.5);
+    const rp = { ...p, db: [p.L - p.db[0]] };
+    if (rp.db[0] !== p.db[0]) add(fmt(rp), 'Číslujeme od konca bližšieho k dvojitej väzbe – jej lokant má byť čo najnižší (' + p.db[0] + ').', 1.2);
+    const sp = { ...p, db: [p.db[0] + 1] };
+    if (sp.db[0] < p.L) add(fmt(sp), 'Lokant dvojitej väzby je nižšie z čísel uhlíkov, medzi ktorými je: ' + dbText(p) + ' → ' + p.db[0] + '.', 2);
+    if (p.L > 4) add(fmt({ ...p, L: p.L - 1 }), 'Spočítaj uhlíky hlavného reťazca ešte raz: je ich ' + p.L + ' → „' + STEM[p.L] + '“.', 2.5);
+    return out;
+  }
+
+  if (p.ring) {
+    const bsl = p.subs.map(s => s.pos).sort(num);
+    for (const x of m.naming.nums) {
+      const xp = partsFromInfo(x, true);
+      const xsl = x.subs.map(s => s.pos).sort(num);
+      let why, pri = 1;
+      if (cmpArr(x.db, p.db) !== 0) { why = 'V cykle začíname číslovať na dvojitej väzbe – ' + (p.db.length > 1 ? 'dvojité väzby majú dostať čo najnižšie čísla (' + locList(p.db) + ').' : 'jej uhlíky sú vždy C1 a C2.'); pri = x.db[0] === 1 ? 1.4 : 2.6; }
+      else if (cmpArr(xsl, bsl) !== 0) why = 'Po dvojitej väzbe pokračuj v číslovaní smerom, kde dostanú vetvy čo najnižšie čísla (' + bsl.join(',') + ').';
+      else why = 'Vetvy majú v oboch smeroch rovnaké čísla, preto rozhoduje abeceda: nižšie číslo dostane vetva, ktorá je v abecede skôr (' + (p.groups[0] ? p.groups[0].name : '') + ').';
+      add(fmt(xp), why, pri);
+    }
+    add(fmt(p, { noCyklo: true }), 'Uhlíky sú spojené do kruhu → názov musí začínať predponou cyklo-.', 1.6);
+    if (p.L > 4) add(fmt({ ...p, L: p.L - 1 }), 'Spočítaj uhlíky v kruhu: je ich ' + p.L + ' → „cyklo' + STEM[p.L] + '“.', 2.2);
+    add(fmt({ ...p, L: p.L + 1 }), 'Spočítaj uhlíky v kruhu: je ich ' + p.L + ' → „cyklo' + STEM[p.L] + '“.', 2.6);
+  } else {
+    const best = m.naming.best;
+    const rev = reverseInfo(best), rp = partsFromInfo(rev);
+    const sameDb = cmpArr(rev.db, best.db) === 0;
+    const sameSl = cmpArr(rev.subs.map(s => s.pos).sort(num), best.subs.map(s => s.pos).sort(num)) === 0;
+    add(fmt(rp), !sameDb
+      ? 'Číslujeme od konca, ku ktorému je dvojitá väzba bližšie – má dostať čo najnižší lokant (' + locList(p.db) + ').'
+      : !sameSl ? 'Dvojité väzby majú z oboch strán rovnaké čísla, preto rozhodujú vetvy – ich lokanty majú byť čo najnižšie (' + p.subs.map(s => s.pos).sort(num).join(',') + ').'
+      : 'Z oboch strán vychádzajú rovnaké čísla, preto rozhoduje abeceda: nižšie číslo dostane vetva, ktorá je v abecede skôr (' + (p.groups[0] ? p.groups[0].name : '') + ').', 1);
+    const bestSet = best.path.slice().sort(num).join(',');
+    for (const info of m.naming.infos) {
+      if (info.path.slice().sort(num).join(',') === bestSet) continue;
+      const o = bestOrient(info); const op = partsFromInfo(o);
+      let why;
+      if (o.L < p.L) why = 'Toto nie je najdlhší reťazec. Hlavný reťazec má ' + p.L + ' uhlíkov (' + STEM[p.L] + ') – rátaj aj uhlíky, ktoré na obrázku vyzerajú ako vetva.';
+      else if (o.db.length < k) why = 'Hlavný reťazec musí obsahovať všetky dvojité väzby – tento jednu obchádza.';
+      else why = 'Rovnako dlhých reťazcov je viac – vyber ten, pri ktorom majú dvojité väzby a vetvy čo najnižšie čísla (a je viac vetiev).';
+      if (o.db.length === 0) why = 'Hlavný reťazec musí obsahovať dvojitú väzbu – tento ju obchádza, preto by vyšiel alkán (-án).';
+      add(o.db.length ? fmt(op) : fmt(op, { an: true }), why, 1.1);
+    }
+    // posun dvojitej väzby
+    for (let j = 0; j < k; j++) {
+      const nd = p.db.slice(); nd[j] = p.db[j] + 1;
+      if (nd[j] < p.L && new Set(nd).size === nd.length) add(fmt({ ...p, db: nd.sort(num) }), 'Lokant dvojitej väzby je nižšie z čísel uhlíkov, medzi ktorými je: C' + p.db[j] + '=C' + (p.db[j] + 1) + ' → ' + p.db[j] + '.', 1.8);
+    }
+    if (k >= 2) {
+      add(fmt(p, { noA: true }), 'Pri viacerých dvojitých väzbách sa za kmeň pridáva „a“: ' + STEM[p.L] + 'a-' + locList(p.db) + '-' + MULT[k] + 'én.', 2);
+      add(fmt(p, { suffixK: 1 }), cap(MULT_WORD[k] || String(k)) + ' dvojité väzby → koncovka „-' + MULT[k] + 'én“.', 2);
+    }
+    if (p.L > 3) {
+      const mx = Math.max(...p.db, ...p.subs.map(s => s.pos));
+      if (mx < p.L - 1) add(fmt({ ...p, L: p.L - 1 }), 'Spočítaj uhlíky hlavného reťazca ešte raz: je ich ' + p.L + ' → „' + STEM[p.L] + '“.', 2.4);
+    }
+    if (p.L < 10 && p.L > 2) add(fmt({ ...p, L: p.L + 1 }), 'Spočítaj uhlíky hlavného reťazca ešte raz: je ich ' + p.L + ' → „' + STEM[p.L] + '“.', 2.6);
+    if (k === 1) add(fmt(p, { an: true }), 'Koncovka „-án“ patrí alkánom (len jednoduché väzby). Látka s dvojitou väzbou je alkén → „-én“.', 3);
+    // posun vetvy
+    p.groups.forEach(g => {
+      g.locs.forEach((l, i) => {
+        for (const d of [1, -1]) {
+          const nl = g.locs.slice(); nl[i] = l + d;
+          if (nl[i] < 2 || nl[i] > p.L - 1) continue;
+          if (g.name !== 'metyl' && (nl[i] < 3 || nl[i] > p.L - 2)) continue;
+          const gr = p.groups.map(x => x === g ? { name: x.name, locs: nl.slice().sort(num) } : x);
+          add(fmt(p, { groups: gr }), 'Skontroluj, na ktorom uhlíku je ' + g.name + ': je na C' + l + '.', 2.2);
+        }
+      });
+    });
+  }
+  if (p.groups.length >= 2) add(fmt(p, { unsorted: true }), 'Predpony sa radia podľa abecedy, násobné predpony (di-, tri-) sa nerátajú: ' + p.groups.map(g => g.name).join(' → ') + '.', 1.9);
+  p.groups.forEach(g => {
+    if (g.locs.length >= 2) {
+      const gr = p.groups.map(x => x === g ? { name: x.name, locs: x.locs, noMult: true } : x);
+      const s = (gr.map(x => x.locs.join(',') + '-' + (x.noMult ? '' : MULT[x.locs.length]) + x.name).join('-')) + coreStr(p, {});
+      add(s, cap(MULT_WORD[g.locs.length] || String(g.locs.length)) + ' rovnaké skupiny → násobná predpona: ' + g.locs.join(',') + '-' + MULT[g.locs.length] + g.name + '.', 1.9);
+    }
+  });
+  return out;
+}
+
+function pickDistractors(m, n) {
+  const pool = nameDistractors(m).map(d => ({ ...d, r: d.pri + Math.random() * 1.6 }));
+  pool.sort((a, b) => a.r - b.r);
+  const out = pool.slice(0, n);
+  let t = 0;
+  while (out.length < n && t++ < 60) {
+    const o = generate(m.diff === 'hard' ? 'medium' : m.diff);
+    if (!o) continue;
+    const key = normalize(o.name);
+    if (m.aliases.some(a => normalize(a) === key) || out.some(x => normalize(x.text) === key)) continue;
+    out.push({ text: o.name, why: 'Toto je úplne iná látka. Pozri sa znova na počet uhlíkov a polohu dvojitej väzby.' });
+  }
+  return out;
+}
+
+/* ---------- zlé vzorce (test 2) ---------- */
+function mutateSpec(m) {
+  const s = JSON.parse(JSON.stringify(m.spec));
+  const r = Math.random();
+  if (m.kind === 'ct') {
+    if (r < 0.45) s.cis = !s.cis;
+    else if (r < 0.75) { s.p = s.p + (Math.random() < 0.5 ? 1 : -1); }
+    else { s.L += Math.random() < 0.5 ? 1 : -1; }
+    if (s.p < 2 || s.p > s.L - 2 || s.p - 1 > 3 || s.L - s.p - 1 > 3) return null;
+    return s;
+  }
+  if (m.kind === 'ring') {
+    if (r < 0.3 && s.subs.length) { pick(s.subs).v = rnd(0, s.n - 1); }
+    else if (r < 0.5) { s.n += Math.random() < 0.5 ? 1 : -1; if (s.n < 4 || s.n > 7) return null; s.subs.forEach(x => x.v = Math.min(x.v, s.n - 1)); if (s.dbs.some(d => d >= s.n)) return null; }
+    else if (r < 0.7 && s.subs.length) { const x = pick(s.subs); x.type = x.type === 'metyl' ? 'etyl' : 'metyl'; }
+    else if (r < 0.85) { if (s.dbs.length === 2) s.dbs = [0]; else if (s.n >= 5) s.dbs = [0, 2]; else return null; }
+    else { if (s.subs.length > 1 && Math.random() < 0.5) s.subs.pop(); else s.subs.push({ v: rnd(0, s.n - 1), type: 'metyl' }); }
+    s.rot = Math.random();
+    return s;
+  }
+  // chain
+  if (r < 0.3) { const j = rnd(0, s.dbs.length - 1); s.dbs[j] += Math.random() < 0.5 ? 1 : -1; s.dbs.sort(num); }
+  else if (r < 0.5 && s.subs.length) { const x = pick(s.subs); x.pos = rnd(2, s.L - 1); }
+  else if (r < 0.62 && s.subs.length) { const x = pick(s.subs); x.type = x.type === 'metyl' ? 'etyl' : 'metyl'; }
+  else if (r < 0.8) { s.L += Math.random() < 0.5 ? 1 : -1; }
+  else if (r < 0.9 && s.subs.length) { s.subs.splice(rnd(0, s.subs.length - 1), 1); }
+  else { if (s.L < 3) return null; s.subs.push({ pos: rnd(2, Math.max(2, s.L - 1)), type: 'metyl' }); }
+  if (s.L < 2) return null;
+  for (let i = 0; i < s.dbs.length; i++) { if (s.dbs[i] < 1 || s.dbs[i] > s.L - 1) return null; if (i && s.dbs[i] - s.dbs[i - 1] < 2) return null; }
+  if (s.subs.some(x => x.pos < 2 || x.pos > s.L - 1)) return null;
+  return s;
+}
+function formulaDistractors(m, n) {
+  const out = [], names = new Set(m.aliases.map(normalize));
+  for (let t = 0; t < 300 && out.length < n; t++) {
+    let base = m;
+    if (out.length && Math.random() < 0.3) base = pick(out);
+    const s = mutateSpec(base); if (!s) continue;
+    if (m.kind === 'ct' && s.L !== m.spec.L && Math.random() < 0.5) continue;
+    const o = makeMol(m.kind, s, m.diff); if (!o) continue;
+    const key = normalize(o.name); if (names.has(key)) continue;
+    if (root.ChemRender && !root.ChemRender.prepare(o)) continue;
+    names.add(key); out.push(o);
+  }
+  let t = 0;
+  while (out.length < n && t++ < 100) {
+    const o = generate(m.diff); if (!o) continue;
+    const key = normalize(o.name); if (names.has(key)) continue;
+    names.add(key); out.push(o);
+  }
+  return out;
+}
+function formulaWhy(correct, wrong) {
+  const a = correct.parts, b = wrong.parts, diffs = [];
+  if (a.ring !== b.ring) diffs.push(a.ring ? 'nie je to cyklus (chýba kruh)' : 'je to cyklus, ale hľadaná látka cyklus nemá');
+  else {
+    if (a.L !== b.L) diffs.push((a.ring ? 'kruh' : 'hlavný reťazec') + ' má ' + b.L + ' uhlíkov namiesto ' + a.L);
+    if (a.db.length !== b.db.length) diffs.push('má ' + b.db.length + ' dvojité väzby namiesto ' + a.db.length);
+    else if (cmpArr(a.db, b.db) !== 0) diffs.push('dvojitá väzba je na inom mieste (' + locList(b.db) + ' namiesto ' + locList(a.db) + ')');
+    const ga = a.groups.map(g => g.locs.join(',') + g.name).join(';'), gb = b.groups.map(g => g.locs.join(',') + g.name).join(';');
+    if (ga !== gb) diffs.push('vetvy sú iné alebo na iných miestach');
+    if (a.ct && b.ct && a.cis !== b.cis) diffs.push('je to ' + (b.cis ? 'cis' : 'trans') + '-izomér: reťazec pokračuje ' + (b.cis ? 'na tú istú stranu' : 'na opačné strany'));
+  }
+  return 'Vybraný vzorec je ' + wrong.name + '. Rozdiel: ' + (diffs.join('; ') || 'iná štruktúra') + '.';
+}
+
+/* ---------- porovnanie písanej odpovede ---------- */
+function normalize(s) {
+  return String(s).toLowerCase().normalize('NFC').replace(/[‐-―−]/g, '-').replace(/\s+/g, '').replace(/[.;]/g, ',').replace(/,+/g, ',');
+}
+const stripDia = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+const stripPunct = s => s.replace(/[-,()]/g, '');
+function checkTyped(m, typed) {
+  const t = normalize(typed);
+  if (!t) return { verdict: 'wrong', note: 'Prázdna odpoveď. Aj chémia si zaslúži aspoň pokus.' };
+  const al = m.aliases.map(normalize);
+  if (al.includes(t)) return { verdict: 'ok', note: normalize(m.name) === t ? '' : 'Uznané. Na škole ale píšete: ' + m.name };
+  if (al.map(stripDia).includes(stripDia(t))) return { verdict: 'half', note: 'Skoro! Pozor na dĺžne a mäkčene – správne je ' + m.name + '.' };
+  if (al.map(a => stripPunct(stripDia(a))).includes(stripPunct(stripDia(t)))) return { verdict: 'half', note: 'Obsah sedí, ale pomlčky alebo čiarky sú zle. Správny zápis: ' + m.name + '.' };
+  const pool = nameDistractors(m);
+  const hit = pool.find(d => normalize(d.text) === t || stripDia(normalize(d.text)) === stripDia(t));
+  return { verdict: 'wrong', why: hit ? hit.why : null };
+}
+
+const api = { generate, makeMol, nameAcyclic, nameRing, buildChain, buildRing, fmt, breakdown, nameDistractors, pickDistractors, formulaDistractors, formulaWhy, checkTyped, normalize, shuffle, pick, rnd, STEM, order, classify, analyze, leafPaths };
+root.Chem = api;
+if (typeof module !== 'undefined') module.exports = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* ===== chémia – kreslenie vzorcov do SVG ===== */
+(function (root) {
+'use strict';
+const C = root.Chem;
+const FS = 20, SFS = 13, SUBDY = 5;
+const CW = { C: 14.4, H: 14.4, '–': 11.1, '(': 6.7, ')': 6.7, ' ': 5.5 };
+const SW = 7.2;
+const INK = 'currentColor';
+
+/* štítok: pole [text, jeIndex] */
+function lblWidth(parts) { let w = 0; for (const [t, s] of parts) for (const ch of t) w += s ? SW : (CW[ch] || 12); return w; }
+function lblSVG(x, y, parts, anchor) {
+  let s = `<text x="${x.toFixed(1)}" y="${(y + 7).toFixed(1)}" text-anchor="${anchor || 'middle'}">`, sub = false;
+  for (const [t, isSub] of parts) {
+    if (isSub && !sub) { s += `<tspan dy="${SUBDY}" font-size="${SFS}">${t}</tspan>`; sub = true; }
+    else if (!isSub && sub) { s += `<tspan dy="${-SUBDY}">${t}</tspan>`; sub = false; }
+    else s += isSub ? `<tspan font-size="${SFS}">${t}</tspan>` : t;
+  }
+  return s + '</text>';
+}
+function atomParts(h, hFirst) {
+  if (h <= 0) return [['C', false]];
+  const hp = h === 1 ? [['H', false]] : [['H', false], [String(h), true]];
+  return hFirst ? [...hp, ['C', false]] : [['C', false], ...hp];
+}
+// text ako „CH₂–CH₃“ → parts
+function textParts(str) {
+  const out = []; for (const ch of str) {
+    const sub = '₀₁₂₃₄₅₆₇₈₉'.indexOf(ch);
+    if (sub >= 0) out.push([String(sub), true]); else out.push([ch, false]);
+  }
+  // zlúčiť susedné rovnakého typu
+  const m = []; for (const p of out) { if (m.length && m[m.length - 1][1] === p[1]) m[m.length - 1][0] += p[0]; else m.push(p.slice()); }
+  return m;
+}
+const line = (x1, y1, x2, y2) => `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`;
+function bondLine(x1, y1, x2, y2, o) {
+  if (o === 1) return line(x1, y1, x2, y2);
+  const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1, nx = -dy / len * 3.4, ny = dx / len * 3.4;
+  return line(x1 + nx, y1 + ny, x2 + nx, y2 + ny) + line(x1 - nx, y1 - ny, x2 - nx, y2 - ny);
+}
+
+/* ---------- vetvy pre reťazce ---------- */
+function branchShape(g, start, from) {
+  // cesta alebo izopropyl
+  const atoms = [start], orders = [C.order(g, from, start)];
+  let prev = from, cur = start;
+  for (let d = 0; d < 6; d++) {
+    const nx = g.adj[cur].filter(e => e[0] !== prev);
+    if (nx.length === 0) return { type: 'path', atoms, orders };
+    if (nx.length === 1) { prev = cur; cur = nx[0][0]; atoms.push(cur); orders.push(nx[0][1]); continue; }
+    if (nx.length === 2 && atoms.length === 1 && nx.every(e => e[1] === 1 && g.adj[e[0]].length === 1))
+      return { type: 'iso', atoms: [start, nx[0][0], nx[1][0]], orders };
+    return null;
+  }
+  return null;
+}
+function chainRenderable(g, path) {
+  const set = new Set(path); const res = [];
+  for (let i = 0; i < path.length; i++) {
+    const br = [];
+    for (const [b] of g.adj[path[i]]) if (!set.has(b)) {
+      const s = branchShape(g, b, path[i]); if (!s) return null;
+      if (s.type === 'path' && s.atoms.length > 4) return null;
+      br.push(s);
+    }
+    if (br.length > 2) return null;
+    res.push(br);
+  }
+  return res;
+}
+
+function prepare(m) {
+  if (m.draw) return true;
+  if (m.kind === 'ring') { m.draw = { rot: (m.spec.rot || 0) }; return true; }
+  if (m.kind === 'ct') { m.draw = { flipV: !!m.spec.flipV }; return true; }
+  const g = m.g;
+  let path = m.naming.best.path;
+  const hard = m.diff === 'hard';
+  if (hard && Math.random() < 0.55) {
+    const paths = C.leafPaths(g); const Lmax = Math.max(...paths.map(p => p.length));
+    const cands = paths.filter(p => p.length >= Lmax - 1 && chainRenderable(g, p));
+    if (cands.length) path = C.pick(cands);
+  } else if (m.diff === 'medium' && Math.random() < 0.3) {
+    const paths = C.leafPaths(g).filter(p => p.length === m.parts.L && chainRenderable(g, p));
+    if (paths.length) path = C.pick(paths);
+  }
+  if (Math.random() < 0.5) path = path.slice().reverse();
+  if (!chainRenderable(g, path)) { path = m.naming.best.path; if (!chainRenderable(g, path)) return false; }
+  m.draw = { path };
+  return true;
+}
+
+function svgWrap(body, box) {
+  const pad = 10;
+  const x = box.x0 - pad, y = box.y0 - pad, w = box.x1 - box.x0 + 2 * pad, h = box.y1 - box.y0 + 2 * pad;
+  return `<svg class="formula" style="--fw:${w.toFixed(0)}" viewBox="${x.toFixed(0)} ${y.toFixed(0)} ${w.toFixed(0)} ${h.toFixed(0)}" xmlns="http://www.w3.org/2000/svg" role="img"><g fill="${INK}" font-family="Arial, Helvetica, sans-serif" font-size="${FS}">${body.text}</g><g stroke="${INK}" stroke-width="1.7" stroke-linecap="round">${body.lines}</g></svg>`;
+}
+function Box() { return { x0: 1e9, y0: 1e9, x1: -1e9, y1: -1e9, add(x0, y0, x1, y1) { this.x0 = Math.min(this.x0, x0); this.y0 = Math.min(this.y0, y0); this.x1 = Math.max(this.x1, x1); this.y1 = Math.max(this.y1, y1); } }; }
+
+/* ---------- reťazec ---------- */
+function renderChain(m) {
+  const g = m.g, path = m.draw.path, set = new Set(path);
+  const STEP = 74, LV = 48;
+  const B = Box(); let T = '', Ls = '';
+  const placeLabel = (x, y, parts) => { const w = lblWidth(parts); T += lblSVG(x, y, parts); B.add(x - w / 2, y - 12, x + w / 2, y + 14); return w; };
+  const hOf = a => 4 - g.adj[a].reduce((s, e) => s + e[1], 0);
+  // hlavný reťazec
+  const W = [];
+  path.forEach((a, i) => { W[i] = placeLabel(i * STEP, 0, atomParts(hOf(a), i === 0 && path.length > 1)); });
+  for (let i = 0; i < path.length - 1; i++) {
+    const x1 = i * STEP + W[i] / 2 + 4, x2 = (i + 1) * STEP - W[i + 1] / 2 - 4;
+    Ls += bondLine(x1, 0, x2, 0, C.order(g, path[i], path[i + 1]));
+  }
+  // vetvy
+  const shapes = chainRenderable(g, path);
+  const downUsed = [];
+  shapes.forEach((brs, i) => {
+    const x = i * STEP;
+    let sides;
+    if (brs.length === 2) sides = [1, -1];
+    else if (brs.length === 1) {
+      const isoHere = brs[0].type === 'iso';
+      const prevDown = downUsed[i - 1];
+      const nextBrs = shapes[i + 1] || [];
+      const conflict = prevDown && (prevDown === 'iso' || isoHere) || (isoHere && nextBrs.length);
+      sides = [conflict ? -1 : 1];
+    } else sides = [];
+    brs.forEach((s, j) => {
+      const sd = sides[j];
+      if (sd === 1) downUsed[i] = s.type;
+      if (s.type === 'path') {
+        let prevY = 0, prevW = W[i];
+        s.atoms.forEach((a, k) => {
+          const y = sd * LV * (k + 1);
+          const w = lblWidth(atomParts(hOf(a)));
+          placeLabel(x, y, atomParts(hOf(a)));
+          const y1 = prevY + sd * 13, y2 = y - sd * 13;
+          Ls += bondLine(x, y1, x, y2, s.orders[k]);
+          prevY = y; prevW = w;
+        });
+      } else {
+        const [a, b, c] = s.atoms, y = sd * LV, y2 = sd * LV * 2;
+        placeLabel(x, y, atomParts(hOf(a)));
+        Ls += bondLine(x, sd * 13, x, y - sd * 13, 1);
+        placeLabel(x - 34, y2, atomParts(3, false));
+        placeLabel(x + 34, y2, atomParts(3, false));
+        Ls += line(x - 8, y + sd * 11, x - 26, y2 - sd * 12) + line(x + 8, y + sd * 11, x + 26, y2 - sd * 12);
+      }
+    });
+  });
+  return svgWrap({ text: T, lines: Ls }, B);
+}
+
+/* ---------- cyklus ---------- */
+const RING_TXT = {
+  metyl: ['CH₃', 'H₃C'], etyl: ['CH₂–CH₃', 'H₃C–H₂C'], izopropyl: ['CH(CH₃)₂', '(H₃C)₂CH'], propyl: ['CH₂–CH₂–CH₃', 'H₃C–H₂C–H₂C'], vinyl: ['CH=CH₂', 'H₂C=CH']
+};
+function renderRing(m) {
+  const g = m.g, ring = m.ring, n = ring.length, set = new Set(ring);
+  const R = n === 4 ? 38 : n === 5 ? 44 : n === 6 ? 46 : 50;
+  const rot = (m.draw.rot || 0) * Math.PI * 2;
+  const V = ring.map((a, k) => { const t = rot + k * 2 * Math.PI / n - Math.PI / 2; return [R * Math.cos(t), R * Math.sin(t)]; });
+  const B = Box(); let T = '', Ls = '';
+  V.forEach(([x, y]) => B.add(x - 2, y - 2, x + 2, y + 2));
+  for (let i = 0; i < n; i++) {
+    const a = V[i], b = V[(i + 1) % n];
+    Ls += line(a[0], a[1], b[0], b[1]);
+    if (C.order(g, ring[i], ring[(i + 1) % n]) === 2) {
+      const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, ml = Math.hypot(mx, my), ix = -mx / ml * 7, iy = -my / ml * 7;
+      const p = (u, v, t) => [u[0] + (v[0] - u[0]) * t, u[1] + (v[1] - u[1]) * t];
+      const p1 = p(a, b, 0.18), p2 = p(a, b, 0.82);
+      Ls += line(p1[0] + ix, p1[1] + iy, p2[0] + ix, p2[1] + iy);
+    }
+  }
+  ring.forEach((a, k) => {
+    const subs = g.adj[a].filter(e => !set.has(e[0]));
+    const [vx, vy] = V[k], base = Math.atan2(vy, vx);
+    subs.forEach((e, j) => {
+      const ang = base + (subs.length === 2 ? (j ? 0.5 : -0.5) : 0);
+      const dx = Math.cos(ang), dy = Math.sin(ang);
+      const type = C.classify(g, e[0], a) || 'metyl';
+      const ex = vx + dx * 26, ey = vy + dy * 26;
+      Ls += line(vx, vy, ex, ey);
+      let anchor = 'middle', txt = RING_TXT[type][0], lx = ex, ly = ey;
+      if (dx > 0.35) { anchor = 'start'; lx = ex + 3; }
+      else if (dx < -0.35) { anchor = 'end'; lx = ex - 3; txt = RING_TXT[type][1]; }
+      else { ly = ey + (dy > 0 ? 13 : -13); if (dx < 0 && type !== 'metyl') txt = RING_TXT[type][1]; }
+      if (anchor !== 'middle' && Math.abs(dy) > 0.5) ly = ey + (dy > 0 ? 7 : -7);
+      const parts = textParts(txt), w = lblWidth(parts);
+      T += lblSVG(lx, ly, parts, anchor);
+      const x0 = anchor === 'start' ? lx : anchor === 'end' ? lx - w : lx - w / 2;
+      B.add(x0, ly - 12, x0 + w, ly + 14);
+    });
+  });
+  return svgWrap({ text: T, lines: Ls }, B);
+}
+
+/* ---------- cis/trans ---------- */
+function rTxt(n, left) {
+  const right = ['', 'CH₃', 'CH₂–CH₃', 'CH₂–CH₂–CH₃', 'CH₂–CH₂–CH₂–CH₃'][n];
+  const lft = ['', 'H₃C', 'H₃C–H₂C', 'H₃C–H₂C–H₂C', 'H₃C–H₂C–H₂C–H₂C'][n];
+  return left ? lft : right;
+}
+function renderCT(m) {
+  const { L, p, cis } = m.spec, r1 = p - 1, r2 = L - p - 1;
+  const fl = m.draw.flipV ? -1 : 1;
+  const B = Box(); let T = '', Ls = '';
+  const cx1 = 0, cx2 = 84;
+  const put = (x, y, txt, anchor) => { const parts = textParts(txt), w = lblWidth(parts); T += lblSVG(x, y, parts, anchor); const x0 = anchor === 'start' ? x : anchor === 'end' ? x - w : x - w / 2; B.add(x0, y - 12, x0 + w, y + 14); };
+  put(cx1, 0, 'C', 'middle'); put(cx2, 0, 'C', 'middle');
+  Ls += bondLine(cx1 + 11, 0, cx2 - 11, 0, 2);
+  const upL = -fl, upR = cis ? -fl : fl; // smer reťazca (y znamienko)
+  const dl = (cx, dirx, sy, txt) => {
+    const ex = cx + dirx * 30, ey = sy * 40;
+    Ls += line(cx + dirx * 7, sy * 11, ex, ey - sy * 4);
+    put(ex + dirx * 3, ey + sy * 8, txt, dirx < 0 ? 'end' : 'start');
+  };
+  dl(cx1, -1, upL, rTxt(r1, true)); dl(cx1, -1, -upL, 'H');
+  dl(cx2, 1, upR, rTxt(r2, false)); dl(cx2, 1, -upR, 'H');
+  return svgWrap({ text: T, lines: Ls }, B);
+}
+
+function render(m) {
+  prepare(m);
+  if (m.kind === 'ring') return renderRing(m);
+  if (m.kind === 'ct') return renderCT(m);
+  return renderChain(m);
+}
+
+root.ChemRender = { prepare, render };
+if (typeof module !== 'undefined') module.exports = root.ChemRender;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* ===== chémia – aplikácia ===== */
+(function () {
+'use strict';
+const C = window.Chem, R = window.ChemRender;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+const N_Q = 10;
+const TYPED_SHARE = { easy: 0.5, medium: 0.4, hard: 0.3 };
+const TIME = {
+  1: { mcq: { easy: 35, medium: 45, hard: 55 }, typed: { easy: 70, medium: 100, hard: 130 } },
+  2: { mcq: { easy: 40, medium: 50, hard: 65 } }
+};
+const DIFF = {
+  easy:   { lbl: 'Ľahké',  t: 'Ešte to ide',          d: 'Nerozvetvené alkény, jednoduché cykloalkény', e: '🙂' },
+  medium: { lbl: 'Stredné', t: 'Už to bolí',          d: 'Rozvetvené alkény, diény, cykloalkény s vetvami', e: '😬' },
+  hard:   { lbl: 'Ťažké',  t: 'Prečo mi toto robíš', d: 'Polyény, vinyl a izopropyl, cyklodiény, cis/trans', e: '💀' },
+  mix:    { lbl: 'Mix',    t: 'Chaos',               d: 'Všetko dokopy, náhodne', e: '🌪️' }
+};
+const TEST = { 1: 'Vzorec → názov', 2: 'Názov → vzorec', 3: 'Dopipiny, oboje!' };
+const SHAPES = ['▲', '◆', '●', '■'];
+const fmtDur = sec => { const m = Math.floor(sec / 60), s = sec % 60; return m ? `${m} min ${s} s` : `${s} s`; };
+
+const OK = ['Hm. Náhoda?', 'Okej, toto si vedela. Neviem prečo.', 'Správne. Chémia je z toho smutná.', 'No pozrime sa. Mozog funguje.', 'Správne. Ani som to nečakal.', 'Bod pre teba, mínus bod pre chémiu.', 'Zase správne? Začína to byť podozrivé.'];
+const BAD = ['Nevadí, aj Mendelejev mal zlé dni.', 'Chémia 1 : Ty 0. Zatiaľ.', 'Tak toto nie. Ale pozri prečo 👇', 'Skoro. Teda… nie úplne skoro.', 'Banka sa zasmiala. Potichu.', 'Nič to, od toho je to cvičenie.'];
+const TIMEOUT = ['Čas vypršal. Chémia vyhrala na body.', 'Tik-tak… a je po čase.', 'Zamyslela si sa tak hlboko, že čas ušiel.'];
+const STREAK = { 3: '3 za sebou?! Začínaš sa učiť. Fuj.', 5: '5 za sebou. Toto už nie je náhoda.', 7: '7 za sebou. Chémia hľadá iný predmet, ktorý by ťa trápil.', 10: 'Desať z desiatich v rade. Kto si a čo si urobila s mojou dcérou?' };
+
+/* ---------- úložisko ---------- */
+const KEY = 'chemia_history_v1';
+function loadHist() { try { const h = JSON.parse(localStorage.getItem(KEY)) || []; h.forEach(r => { if (!r.v) { r.score = Math.round(r.score / 10); r.v = 2; } }); return h; } catch (e) { return []; } }
+function saveHist(h) { try { localStorage.setItem(KEY, JSON.stringify(h.slice(0, 200))); } catch (e) {} }
+
+/* ---------- maskot ---------- */
+function mascot(cls) {
+  const m = document.querySelectorAll('.mascot');
+  m.forEach(el => { el.classList.remove('ok', 'boom'); void el.offsetWidth; if (cls) el.classList.add(cls); });
+}
+
+/* ---------- navigácia ---------- */
+let S = null; // stav testu
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
+  window.scrollTo(0, 0);
+  if (id === 'home') mascot(null);
+}
+document.addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if (go) { stopTimer(); show(go.dataset.go); }
+});
+document.querySelectorAll('[data-test]').forEach(b => b.addEventListener('click', () => openDiff(+b.dataset.test)));
+$('#btnHist').addEventListener('click', () => { renderHist(); show('history'); });
+$('#btnCheat').addEventListener('click', () => show('cheat'));
+$('#btnAgain').addEventListener('click', () => startTest(S.test, S.diff));
+
+function openDiff(test) {
+  $('#diffTitle').textContent = TEST[test];
+  $('#diffList').innerHTML = Object.entries(DIFF).map(([k, d]) =>
+    `<button class="big" data-d="${k}"><span class="badge">${d.e}</span><span class="bt">${d.lbl} – „${d.t}“</span><span class="bs">${d.d}</span></button>`).join('');
+  $('#diffList').querySelectorAll('[data-d]').forEach(b => b.addEventListener('click', () => startTest(test, b.dataset.d)));
+  show('diff');
+}
+
+/* ---------- tvorba otázok ---------- */
+function buildQuestion(test, diff, avoid) {
+  const m = C.generate(diff, avoid);
+  if (!m) return null;
+  avoid.add(m.name);
+  const dir = test === 3 ? (Math.random() < 0.5 ? 1 : 2) : test;
+  const q = { test: dir, m, diff: m.diff };
+  if (dir === 1) {
+    q.typed = Math.random() < TYPED_SHARE[m.diff];
+    if (!q.typed) {
+      const ds = C.pickDistractors(m, 3);
+      q.opts = C.shuffle([{ text: m.name, ok: true }, ...ds.map(d => ({ text: d.text, why: d.why }))]);
+    }
+  } else {
+    const ws = C.formulaDistractors(m, 3);
+    q.opts = C.shuffle([{ mol: m, ok: true }, ...ws.map(w => ({ mol: w, why: C.formulaWhy(m, w) }))]);
+    q.opts.forEach(o => o.svg = R.render(o.mol));
+  }
+  q.svg = dir === 1 ? R.render(m) : null;
+  q.time = TIME[dir][q.typed ? 'typed' : 'mcq'][m.diff];
+  return q;
+}
+
+function startTest(test, diff) {
+  const avoid = new Set(), qs = [];
+  for (let i = 0; i < N_Q; i++) { const q = buildQuestion(test, diff, avoid); if (q) qs.push(q); }
+  S = { test, diff, qs, i: 0, t0: Date.now(), ans: 0, score: 0, streak: 0, best: 0, correct: 0, half: 0, mistakes: [] };
+  show('quiz');
+  renderQ();
+}
+
+/* ---------- časovač ---------- */
+let tInt = null, tStart = 0;
+function startTimer(sec) {
+  stopTimer();
+  tStart = performance.now();
+  const bar = $('#timerBar'), box = $('#timer');
+  box.className = 'timer';
+  const tick = () => {
+    const el = (performance.now() - tStart) / 1000, left = Math.max(0, 1 - el / sec);
+    bar.style.width = (left * 100) + '%';
+    box.className = 'timer' + (left < 0.15 ? ' crit' : left < 0.35 ? ' warn' : '');
+    if (el >= sec) { stopTimer(); answer(null, true); }
+  };
+  tick(); tInt = setInterval(tick, 100);
+}
+function stopTimer() { if (tInt) { clearInterval(tInt); tInt = null; } }
+const elapsed = () => (performance.now() - tStart) / 1000;
+
+/* ---------- otázka ---------- */
+function header() {
+  $('#qNum').innerHTML = `Otázka ${S.i + 1}/${S.qs.length} <span class="muted">· ${DIFF[S.qs[S.i].diff].lbl}</span>`;
+  $('#qScore').textContent = S.score + ' b';
+  $('#qStreak').textContent = S.streak >= 2 ? '🔥' + S.streak : '';
+}
+function renderQ() {
+  const q = S.qs[S.i];
+  mascot(null);
+  header();
+  $('#feedback').innerHTML = '';
+  if (q.test === 1) {
+    $('#prompt').innerHTML = `<p class="ask">${q.typed ? 'Napíš názov tejto látky:' : 'Ako sa volá táto látka?'}</p><div class="paper">${q.svg}</div>`;
+  } else {
+    $('#prompt').innerHTML = `<p class="ask">Nájdi vzorec látky:</p><div class="name">${esc(q.m.name)}</div>`;
+  }
+  const A = $('#answers');
+  if (q.typed) {
+    A.innerHTML = `<div class="typed">
+      <input id="inp" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="napr. 2-metylbut-1-én" enterkeyhint="done">
+      <div class="keys">${['-', ',', 'é', 'dién', 'metyl', 'etyl', 'cyklo'].map(k => `<button type="button" data-k="${k}">${k}</button>`).join('')}</div>
+      <button class="primary" id="send">Odoslať</button>
+      <p class="hint">Pomlčky, čiarky a dĺžne sa počítajú. Za drobnú chybu v zápise dostaneš polovicu bodov.</p></div>`;
+    const inp = $('#inp');
+    A.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => {
+      const k = b.dataset.k, s = inp.selectionStart ?? inp.value.length, e = inp.selectionEnd ?? s;
+      inp.value = inp.value.slice(0, s) + k + inp.value.slice(e); inp.focus(); inp.setSelectionRange(s + k.length, s + k.length);
+    }));
+    $('#send').addEventListener('click', () => answer(inp.value));
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') answer(inp.value); });
+    setTimeout(() => inp.focus({ preventScroll: true }), 50);
+  } else {
+    const f = q.test === 2;
+    A.innerHTML = `<div class="opts${f ? ' two' : ''}">` + q.opts.map((o, i) =>
+      `<button class="opt c${i}${f ? ' f' : ''}" data-i="${i}"><span class="shp">${SHAPES[i]}</span>${f ? `<div class="paper">${o.svg}</div>` : `<span>${esc(o.text)}</span>`}</button>`).join('') + '</div>';
+    A.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => answer(+b.dataset.i)));
+  }
+  startTimer(q.time);
+}
+
+/* ---------- vyhodnotenie ---------- */
+function answer(choice, timeout) {
+  const q = S.qs[S.i];
+  if (q.done) return;
+  q.done = true;
+  stopTimer();
+  const t = Math.min(elapsed(), q.time);
+  S.ans += t;
+  let verdict = 'wrong', why = null, note = '', yours = '';
+  if (timeout) verdict = 'timeout';
+  else if (q.typed) {
+    yours = String(choice || '').trim();
+    const r = C.checkTyped(q.m, yours);
+    verdict = r.verdict === 'ok' ? 'ok' : r.verdict === 'half' ? 'half' : 'wrong';
+    why = r.why; note = r.note || '';
+  } else {
+    const o = q.opts[choice];
+    verdict = o.ok ? 'ok' : 'wrong';
+    why = o.why || null;
+    yours = q.test === 1 ? o.text : o.mol.name;
+  }
+  // body
+  let pts = 0;
+  if (verdict === 'ok' || verdict === 'half') {
+    const max = q.typed ? 150 : 100;
+    pts = Math.round(max * (1 - 0.5 * t / q.time));
+    if (verdict === 'half') pts = Math.round(pts / 2);
+    S.streak++; S.best = Math.max(S.best, S.streak);
+    if (S.streak >= 2) pts += 10 * Math.min(S.streak - 1, 5);
+    if (verdict === 'ok') S.correct++; else S.half++;
+  } else {
+    S.streak = 0;
+    S.mistakes.push({ q, yours: timeout ? '(čas vypršal)' : (yours || '(nič)') });
+  }
+  S.score += pts;
+  header();
+
+  // označenie možností
+  if (!q.typed) {
+    document.querySelectorAll('#answers .opt').forEach((b, i) => {
+      b.disabled = true;
+      const o = q.opts[i];
+      if (o.ok) { b.classList.add('right'); b.insertAdjacentHTML('beforeend', '<span class="mark">✓</span>'); }
+      else if (i === choice) { b.classList.add('wrong'); b.insertAdjacentHTML('beforeend', '<span class="mark">✗</span>'); }
+      else b.classList.add('dim');
+    });
+  } else {
+    const inp = $('#inp'); if (inp) { inp.disabled = true; inp.blur(); }
+    document.querySelectorAll('#answers button').forEach(b => b.disabled = true);
+  }
+
+  const good = verdict === 'ok' || verdict === 'half';
+  mascot(good ? 'ok' : 'boom');
+  if (!good && navigator.vibrate) try { navigator.vibrate(120); } catch (e) {}
+
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  let head, snark, cls;
+  if (verdict === 'ok') { head = 'Správne ✓'; snark = pick(OK); cls = 'ok'; }
+  else if (verdict === 'half') { head = 'Uznané s výhradou'; snark = 'Polovica bodov. Pani učiteľka by asi nebola taká milá.'; cls = 'half'; }
+  else if (verdict === 'timeout') { head = 'Čas vypršal ⏰'; snark = pick(TIMEOUT); cls = 'bad'; }
+  else { head = 'Nesprávne ✗'; snark = pick(BAD); cls = 'bad'; }
+  if (good && STREAK[S.streak]) snark = STREAK[S.streak];
+
+  const bd = C.breakdown(q.m).map(l => `<li>${esc(l)}</li>`).join('');
+  let html = `<div class="fb ${cls}"><span class="pts${pts ? '' : ' zero'}">+${pts}</span><div class="head">${head}</div><div class="snark">${esc(snark)}</div>`;
+  if (note) html += `<div class="ans">${esc(note)}</div>`;
+  if (!good) {
+    if (q.test === 1) html += `<div class="ans">Správne: <b>${esc(q.m.name)}</b>${q.typed && yours ? `<br><span style="color:var(--muted)">Ty: ${esc(yours)}</span>` : ''}</div>`;
+    else html += `<div class="ans">Správny vzorec je označený ✓.</div>`;
+    if (why) html += `<div class="explain"><div class="t">Kde je chyba</div>${esc(why)}</div>`;
+    html += `<div class="explain"><div class="t">Ako na to</div><ul>${bd}</ul></div>`;
+  } else {
+    html += `<details class="more"><summary>Ukáž rozbor</summary><div class="explain"><ul>${bd}</ul></div></details>`;
+  }
+  html += `<button class="primary" id="next">${S.i + 1 < S.qs.length ? 'Ďalej →' : 'Výsledok →'}</button></div>`;
+  $('#feedback').innerHTML = html;
+  const nx = $('#next');
+  nx.addEventListener('click', next);
+  setTimeout(() => $('#feedback').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
+}
+
+function next() {
+  S.i++;
+  if (S.i < S.qs.length) { renderQ(); window.scrollTo(0, 0); }
+  else finish();
+}
+
+/* ---------- výsledok ---------- */
+function finish() {
+  stopTimer();
+  const dur = Math.round((Date.now() - S.t0) / 1000), ansDur = Math.round(S.ans);
+  const tot = S.qs.length, pct = Math.round(100 * (S.correct + S.half * 0.5) / tot);
+  let msg;
+  if (pct === 100) msg = 'Gratulujem, si oficiálne chemička. Je mi ťa ľúto. 🧪';
+  else if (pct >= 80) msg = 'Vidíš? Trojka by bola aj tak málo 🤞';
+  else if (pct >= 50) msg = 'Trojka na obzore 🤞';
+  else if (pct >= 30) msg = 'Hm. Lepšie ako nič. Tesne.';
+  else msg = 'Toto nebolo nič. Chémia 1 : Ty 0. Odveta?';
+  const hist = loadHist();
+  hist.unshift({ v: 2, ts: Date.now(), test: S.test, diff: S.diff, score: S.score, correct: S.correct, half: S.half, total: tot, dur });
+  saveHist(hist);
+  mascot(pct >= 50 ? 'ok' : 'boom');
+  $('#resultBox').innerHTML = '<div class="mwrap">' + document.querySelector('#home .mascot').outerHTML + '</div>' + `<div class="stat">${TEST[S.test]} · ${DIFF[S.diff].lbl} – „${DIFF[S.diff].t}“</div>
+    <div class="score">${S.score} b</div>
+    <div class="stat">${S.correct}/${tot} správne${S.half ? ` (+${S.half} s výhradou)` : ''} · ${pct} % · najdlhšia séria ${S.best}</div>
+    <div class="stat">⏱ Test trval ${fmtDur(dur)} (z toho premýšľanie nad odpoveďami ${fmtDur(ansDur)})</div>
+    <div class="msg">${msg}</div>`;
+  let mh = '';
+  if (S.mistakes.length) {
+    mh = `<h2 style="margin-top:24px">Prehľad chýb</h2><p class="sub">Toto si ešte raz pozri. Áno, teraz.</p>`;
+    for (const { q, yours } of S.mistakes) {
+      mh += `<div class="mist">`;
+      if (q.test === 1) mh += `<div class="paper">${q.svg}</div><div class="yours">Ty: ${esc(yours)}</div><div class="good">Správne: ${esc(q.m.name)}</div>`;
+      else mh += `<div class="q">Hľadaný vzorec: <b>${esc(q.m.name)}</b></div><div class="paper">${q.opts.find(o => o.ok).svg}</div><div class="yours">Ty: ${esc(yours)}</div>`;
+      mh += `</div>`;
+    }
+  } else mh = `<p class="empty">Žiadne chyby. Podozrivé.</p>`;
+  $('#mistakes').innerHTML = mh;
+  show('results');
+  mascot(pct >= 50 ? 'ok' : 'boom');
+}
+
+/* ---------- história ---------- */
+function renderHist() {
+  const h = loadHist();
+  if (!h.length) { $('#histBox').innerHTML = '<p class="empty">Zatiaľ žiadne utrpenie. To sa dá rýchlo napraviť.</p>'; return; }
+  const best = {};
+  for (const r of h) { const k = r.test + '|' + r.diff; if (!best[k] || r.score > best[k].score) best[k] = r; }
+  let html = '<h3 style="margin:8px 0 0">Najlepšie skóre</h3><div class="best">';
+  for (const t of [1, 2, 3]) for (const d of Object.keys(DIFF)) {
+    const b = best[t + '|' + d]; if (!b) continue;
+    html += `<div><small>${TEST[t]} · ${DIFF[d].lbl}</small><b>${b.score} b</b> <small>${b.correct}/${b.total}</small></div>`;
+  }
+  html += '</div><h3 style="margin:8px 0">Všetky pokusy</h3>';
+  const fmt = ts => { const d = new Date(ts); return d.toLocaleDateString('sk-SK') + ' ' + d.toLocaleTimeString('sk-SK', { hour: '2-digit', minute: '2-digit' }); };
+  for (const r of h) html += `<div class="hrow"><div>${TEST[r.test]} · ${DIFF[r.diff].lbl}<small>${fmt(r.ts)}${r.dur ? ' · ⏱ ' + fmtDur(r.dur) : ''}</small></div><div class="p">${r.score} b<small>${r.correct}/${r.total}${r.half ? ' +' + r.half + '½' : ''}</small></div></div>`;
+  html += '<button class="danger" id="clr">Vymazať históriu</button>';
+  $('#histBox').innerHTML = html;
+  $('#clr').addEventListener('click', function () {
+    if (this.dataset.sure) { saveHist([]); renderHist(); }
+    else { this.dataset.sure = '1'; this.textContent = 'Naozaj? Klikni znova a utrpenie zmizne.'; }
+  });
+}
+
+/* ---------- venovanie (len cez odkaz #dcera) ---------- */
+(function () {
+  const K = 'chemia_dedic';
+  let on = false;
+  try {
+    const want = window.CHEMIA_DEDIC || /dcera|dcéra/i.test(decodeURIComponent(location.hash + location.search));
+    if (want) localStorage.setItem(K, '1');
+    on = !!window.CHEMIA_DEDIC || localStorage.getItem(K) === '1';
+  } catch (e) { on = !!window.CHEMIA_DEDIC || /dcera/i.test(location.hash); }
+  $('#dedic').hidden = !on;
+  // záloha: 5× ťuknúť na nadpis zapne/vypne venovanie
+  let taps = 0, tt = null;
+  document.querySelector('h1.logo').addEventListener('click', () => {
+    taps++; clearTimeout(tt); tt = setTimeout(() => taps = 0, 1500);
+    if (taps >= 5) { taps = 0; on = !on; try { localStorage.setItem(K, on ? '1' : '0'); } catch (e) {} $('#dedic').hidden = !on; }
+  });
+})();
+
+/* ---------- záloha ---------- */
+const panel = $('#panel');
+function closePanel() { panel.innerHTML = ''; }
+function panelMsg(t, err) { const m = panel.querySelector('.msg'); if (m) { m.textContent = t; m.classList.toggle('err', !!err); } }
+function backupData() {
+  let dedic = null; try { dedic = localStorage.getItem('chemia_dedic'); } catch (e) {}
+  return { app: 'chemia', v: 1, ts: Date.now(), history: loadHist(), dedic };
+}
+function backupName() { const d = new Date(); const z = n => String(n).padStart(2, '0'); return `chemia-zaloha-${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}.json`; }
+$('#btnBackup').addEventListener('click', () => {
+  if (panel.dataset.k === 'b' && panel.innerHTML) { closePanel(); return; }
+  panel.dataset.k = 'b';
+  const n = loadHist().length;
+  const canShare = !!(navigator.canShare && window.File);
+  panel.innerHTML = `<div class="panel"><button class="x" data-close>✕</button><h3>💾 Záloha</h3>
+    <p>Uloží históriu skóre (${n} ${n === 1 ? 'pokus' : n >= 2 && n <= 4 ? 'pokusy' : 'pokusov'}) do súboru. Hodí sa pri výmene mobilu alebo pred odinštalovaním.</p>
+    <div class="acts">
+      <button class="primary" id="bkSave">Uložiť zálohu do súboru</button>
+      ${canShare ? '<button class="ghost" id="bkShare">Poslať zálohu (WhatsApp, Disk, e-mail…)</button>' : ''}
+      <button class="ghost" id="bkLoad">Obnoviť zo zálohy</button>
+    </div><div class="msg"></div></div>`;
+  panel.querySelector('[data-close]').addEventListener('click', closePanel);
+  $('#bkSave').addEventListener('click', () => {
+    try {
+      const blob = new Blob([JSON.stringify(backupData(), null, 1)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = backupName();
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      panelMsg('Záloha uložená do Stiahnutých súborov. Utrpenie je v bezpečí.');
+    } catch (e) { panelMsg('Uloženie sa nepodarilo.', true); }
+  });
+  const sh = $('#bkShare');
+  if (sh) sh.addEventListener('click', async () => {
+    try {
+      const f = new File([JSON.stringify(backupData(), null, 1)], backupName(), { type: 'application/json' });
+      if (!navigator.canShare({ files: [f] })) { panelMsg('Tento mobil neumožňuje poslať súbor. Použi „Uložiť zálohu do súboru“.', true); return; }
+      await navigator.share({ files: [f], title: 'chémia – záloha' });
+      panelMsg('Záloha odoslaná.');
+    } catch (e) { if (e && e.name !== 'AbortError') panelMsg('Poslanie sa nepodarilo.', true); }
+  });
+  $('#bkLoad').addEventListener('click', () => { $('#restoreFile').value = ''; $('#restoreFile').click(); });
+});
+$('#restoreFile').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const d = JSON.parse(rd.result);
+      if (!d || d.app !== 'chemia' || !Array.isArray(d.history)) throw new Error('bad');
+      const cur = loadHist(), seen = new Set(cur.map(r => r.ts + '|' + r.score));
+      let added = 0;
+      for (const r of d.history) {
+        if (!r || typeof r.ts !== 'number' || typeof r.score !== 'number' || !TEST[r.test] || !DIFF[r.diff]) continue;
+        const k = r.ts + '|' + r.score; if (seen.has(k)) continue; seen.add(k); cur.push(r); added++;
+      }
+      cur.sort((a, b) => b.ts - a.ts); saveHist(cur);
+      if (d.dedic === '1') { try { localStorage.setItem('chemia_dedic', '1'); } catch (er) {} $('#dedic').hidden = false; }
+      panelMsg(added ? `Obnovené: ${added} ${added === 1 ? 'pokus' : added <= 4 ? 'pokusy' : 'pokusov'}. Utrpenie je späť.` : 'Všetko zo zálohy tu už bolo, nič nové.');
+    } catch (er) { panelMsg('Toto nie je záloha z chémie. Skús iný súbor.', true); }
+  };
+  rd.readAsText(f);
+});
+
+/* ---------- inštalácia ---------- */
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; });
+const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function syncInstallBtn() { if (isStandalone()) { $('#btnInstall').textContent = '✓ Nainštalované'; } }
+syncInstallBtn();
+window.addEventListener('appinstalled', () => { installEvt = null; syncInstallBtn(); if (panel.dataset.k === 'i') panelMsg('Hotovo! Ikona je na ploche. Chémia sa ti nasťahovala do mobilu. 😩'); });
+$('#btnInstall').addEventListener('click', async () => {
+  if (panel.dataset.k === 'i' && panel.innerHTML) { closePanel(); return; }
+  panel.dataset.k = 'i';
+  let body;
+  if (isStandalone()) body = '<p>Apka už je nainštalovaná a práve ju používaš. Niet úniku.</p>';
+  else if (installEvt) {
+    body = '<p>Pridá ikonu na plochu. Apka potom pôjde aj bez internetu a skóre zostane v mobile.</p><div class="acts"><button class="primary" id="doInstall">Nainštalovať na plochu</button></div>';
+  } else if (isIOS()) {
+    body = '<p>Na iPhone to ide cez Safari:</p><ol><li>Otvor túto stránku v <b>Safari</b>.</li><li>Ťukni na <b>Zdieľať</b> (štvorec so šípkou).</li><li>Zvoľ <b>Pridať na plochu</b> a potvrď <b>Pridať</b>.</li></ol>';
+  } else {
+    body = '<p>V Chrome na Androide:</p><ol><li>Ťukni vpravo hore na <b>⋮</b>.</li><li>Zvoľ <b>Inštalovať aplikáciu</b> alebo <b>Pridať na plochu</b>.</li><li>Potvrď.</li></ol><p>Ak to tam nie je, otvor stránku v Chrome (nie v Messengeri či Instagrame).</p>';
+  }
+  panel.innerHTML = `<div class="panel"><button class="x" data-close>✕</button><h3>📲 Nainštalovať</h3>${body}<div class="msg"></div></div>`;
+  panel.querySelector('[data-close]').addEventListener('click', closePanel);
+  const di = $('#doInstall');
+  if (di) di.addEventListener('click', async () => {
+    try { installEvt.prompt(); const r = await installEvt.userChoice; installEvt = null;
+      panelMsg(r && r.outcome === 'accepted' ? 'Hotovo! Ikona je na ploche.' : 'Nevadí, chémia počká. Ako vždy.', r && r.outcome !== 'accepted');
+    } catch (e) { panelMsg('Inštalácia sa nespustila. Skús cez menu ⋮ → Inštalovať aplikáciu.', true); }
+  });
+});
+
+/* ---------- aktualizácia ---------- */
+try { $('#ver').textContent = 'verzia ' + (window.CHEMIA_VERSION || '?'); } catch (e) {}
+$('#btnUpdate').addEventListener('click', async function () {
+  this.disabled = true; this.textContent = '⏳ Sťahujem novú verziu…';
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.update().catch(() => {})));
+    }
+    if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); }
+  } catch (e) {}
+  const url = location.pathname + '?v=' + Date.now() + location.hash;
+  setTimeout(() => location.replace(url), 300);
+});
+
+/* ---------- PWA ---------- */
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => { try { navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {} });
+}
+})();
+
+</script>
+<script>
+(function(){const L=['Dnešná nálada: <b>0 %</b> chémie, <b>100 %</b> odporu.','Jediná dvojitá väzba, ktorú uznávam, je s Netflixom.','Alkény: lebo jedna väzba ma netrápila dosť.','Moja obľúbená reakcia? <b>Odchod z hodiny.</b>','Chémia je všade. <b>Žiaľ.</b>','Nenávidím chémiu. Ale <b>trojku</b> chcem.','cis, trans, je mi to fuk… <b>ale na test nie.</b>','Hlavný reťazec môjho života: <b>prežiť do piatku.</b>'];
+const el=document.getElementById('hate');let i=Math.floor(Math.random()*L.length);const set=()=>{el.innerHTML=L[i%L.length];i++};set();setInterval(set,4500);})();
+</script>
+</body>
+</html>

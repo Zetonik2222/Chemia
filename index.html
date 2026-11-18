@@ -173,6 +173,8 @@ footer{color:var(--muted);text-align:center;font-size:.8rem;margin-top:26px;opac
 .panel .msg{margin-top:10px;font-weight:700;color:var(--neon)}
 .panel .msg.err{color:var(--bad)}
 .panel .x{float:right;background:none;border:0;color:var(--muted);font-size:1.2rem;padding:0 4px}
+.upd{width:100%;margin-top:10px;font-size:.95rem;padding:10px}
+footer .ver{display:block;margin-top:4px;font-size:.72rem}
 
 /* ===== ružovo-fialová téma: „nenávidím chémiu“ ===== */
 :root{
@@ -223,6 +225,7 @@ footer{opacity:.85}
 .sticker{right:-40px;top:-6px}
 
 </style>
+<script>window.CHEMIA_VERSION='18. 11. 2026 16:21'</script>
 </head>
 <body>
 <div class="app">
@@ -259,6 +262,7 @@ footer{opacity:.85}
   </div>
   <button class="big" data-test="1"><span class="badge">🧪</span><span class="bt">Vzorec → názov</span><span class="bs">Pozri vzorec, vymysli meno. Raz klikáš, raz píšeš.</span></button>
   <button class="big" data-test="2"><span class="badge">🔬</span><span class="bt">Názov → vzorec</span><span class="bs">Máš meno, nájdi ten správny vzorec zo štyroch.</span></button>
+  <button class="big" data-test="3"><span class="badge">🤬</span><span class="bt">Dopipiny, oboje!</span><span class="bs">Raz vzorec, raz názov. Chémia útočí zo všetkých strán a ty sa bráň, ako vieš.</span></button>
   <div class="row">
     <button class="ghost" id="btnHist">📜 Záznam utrpenia</button>
     <button class="ghost" id="btnCheat">📄 Ťahák</button>
@@ -268,8 +272,9 @@ footer{opacity:.85}
     <button class="ghost" id="btnInstall">📲 Nainštalovať</button>
   </div>
   <div id="panel"></div>
+  <button class="ghost upd" id="btnUpdate">🔄 Aktualizovať apku</button>
   <input type="file" id="restoreFile" accept=".json,application/json" hidden>
-  <footer>Vyrobené s 💜 k dcére a 💔 k chémii</footer>
+  <footer>Vyrobené s 💜 k dcére a 💔 k chémii<span class="ver" id="ver"></span></footer>
 </section>
 
 <!-- OBŤAŽNOSŤ -->
@@ -1154,8 +1159,8 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 const N_Q = 10;
 const TYPED_SHARE = { easy: 0.5, medium: 0.4, hard: 0.3 };
 const TIME = {
-  1: { mcq: { easy: 25, medium: 35, hard: 45 }, typed: { easy: 60, medium: 90, hard: 120 } },
-  2: { mcq: { easy: 30, medium: 40, hard: 55 } }
+  1: { mcq: { easy: 35, medium: 45, hard: 55 }, typed: { easy: 70, medium: 100, hard: 130 } },
+  2: { mcq: { easy: 40, medium: 50, hard: 65 } }
 };
 const DIFF = {
   easy:   { lbl: 'Ľahké',  t: 'Ešte to ide',          d: 'Nerozvetvené alkény, jednoduché cykloalkény', e: '🙂' },
@@ -1163,8 +1168,9 @@ const DIFF = {
   hard:   { lbl: 'Ťažké',  t: 'Prečo mi toto robíš', d: 'Polyény, vinyl a izopropyl, cyklodiény, cis/trans', e: '💀' },
   mix:    { lbl: 'Mix',    t: 'Chaos',               d: 'Všetko dokopy, náhodne', e: '🌪️' }
 };
-const TEST = { 1: 'Vzorec → názov', 2: 'Názov → vzorec' };
+const TEST = { 1: 'Vzorec → názov', 2: 'Názov → vzorec', 3: 'Dopipiny, oboje!' };
 const SHAPES = ['▲', '◆', '●', '■'];
+const fmtDur = sec => { const m = Math.floor(sec / 60), s = sec % 60; return m ? `${m} min ${s} s` : `${s} s`; };
 
 const OK = ['Hm. Náhoda?', 'Okej, toto si vedela. Neviem prečo.', 'Správne. Chémia je z toho smutná.', 'No pozrime sa. Mozog funguje.', 'Správne. Ani som to nečakal.', 'Bod pre teba, mínus bod pre chémiu.', 'Zase správne? Začína to byť podozrivé.'];
 const BAD = ['Nevadí, aj Mendelejev mal zlé dni.', 'Chémia 1 : Ty 0. Zatiaľ.', 'Tak toto nie. Ale pozri prečo 👇', 'Skoro. Teda… nie úplne skoro.', 'Banka sa zasmiala. Potichu.', 'Nič to, od toho je to cvičenie.'];
@@ -1173,7 +1179,7 @@ const STREAK = { 3: '3 za sebou?! Začínaš sa učiť. Fuj.', 5: '5 za sebou. T
 
 /* ---------- úložisko ---------- */
 const KEY = 'chemia_history_v1';
-function loadHist() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+function loadHist() { try { const h = JSON.parse(localStorage.getItem(KEY)) || []; h.forEach(r => { if (!r.v) { r.score = Math.round(r.score / 10); r.v = 2; } }); return h; } catch (e) { return []; } }
 function saveHist(h) { try { localStorage.setItem(KEY, JSON.stringify(h.slice(0, 200))); } catch (e) {} }
 
 /* ---------- maskot ---------- */
@@ -1211,8 +1217,9 @@ function buildQuestion(test, diff, avoid) {
   const m = C.generate(diff, avoid);
   if (!m) return null;
   avoid.add(m.name);
-  const q = { test, m, diff: m.diff };
-  if (test === 1) {
+  const dir = test === 3 ? (Math.random() < 0.5 ? 1 : 2) : test;
+  const q = { test: dir, m, diff: m.diff };
+  if (dir === 1) {
     q.typed = Math.random() < TYPED_SHARE[m.diff];
     if (!q.typed) {
       const ds = C.pickDistractors(m, 3);
@@ -1223,15 +1230,15 @@ function buildQuestion(test, diff, avoid) {
     q.opts = C.shuffle([{ mol: m, ok: true }, ...ws.map(w => ({ mol: w, why: C.formulaWhy(m, w) }))]);
     q.opts.forEach(o => o.svg = R.render(o.mol));
   }
-  q.svg = test === 1 ? R.render(m) : null;
-  q.time = TIME[test][q.typed ? 'typed' : 'mcq'][m.diff];
+  q.svg = dir === 1 ? R.render(m) : null;
+  q.time = TIME[dir][q.typed ? 'typed' : 'mcq'][m.diff];
   return q;
 }
 
 function startTest(test, diff) {
   const avoid = new Set(), qs = [];
   for (let i = 0; i < N_Q; i++) { const q = buildQuestion(test, diff, avoid); if (q) qs.push(q); }
-  S = { test, diff, qs, i: 0, score: 0, streak: 0, best: 0, correct: 0, half: 0, mistakes: [] };
+  S = { test, diff, qs, i: 0, t0: Date.now(), ans: 0, score: 0, streak: 0, best: 0, correct: 0, half: 0, mistakes: [] };
   show('quiz');
   renderQ();
 }
@@ -1301,6 +1308,7 @@ function answer(choice, timeout) {
   q.done = true;
   stopTimer();
   const t = Math.min(elapsed(), q.time);
+  S.ans += t;
   let verdict = 'wrong', why = null, note = '', yours = '';
   if (timeout) verdict = 'timeout';
   else if (q.typed) {
@@ -1317,11 +1325,11 @@ function answer(choice, timeout) {
   // body
   let pts = 0;
   if (verdict === 'ok' || verdict === 'half') {
-    const max = q.typed ? 1500 : 1000;
+    const max = q.typed ? 150 : 100;
     pts = Math.round(max * (1 - 0.5 * t / q.time));
     if (verdict === 'half') pts = Math.round(pts / 2);
     S.streak++; S.best = Math.max(S.best, S.streak);
-    if (S.streak >= 2) pts += 100 * Math.min(S.streak - 1, 5);
+    if (S.streak >= 2) pts += 10 * Math.min(S.streak - 1, 5);
     if (verdict === 'ok') S.correct++; else S.half++;
   } else {
     S.streak = 0;
@@ -1383,6 +1391,7 @@ function next() {
 /* ---------- výsledok ---------- */
 function finish() {
   stopTimer();
+  const dur = Math.round((Date.now() - S.t0) / 1000), ansDur = Math.round(S.ans);
   const tot = S.qs.length, pct = Math.round(100 * (S.correct + S.half * 0.5) / tot);
   let msg;
   if (pct === 100) msg = 'Gratulujem, si oficiálne chemička. Je mi ťa ľúto. 🧪';
@@ -1391,12 +1400,13 @@ function finish() {
   else if (pct >= 30) msg = 'Hm. Lepšie ako nič. Tesne.';
   else msg = 'Toto nebolo nič. Chémia 1 : Ty 0. Odveta?';
   const hist = loadHist();
-  hist.unshift({ ts: Date.now(), test: S.test, diff: S.diff, score: S.score, correct: S.correct, half: S.half, total: tot });
+  hist.unshift({ v: 2, ts: Date.now(), test: S.test, diff: S.diff, score: S.score, correct: S.correct, half: S.half, total: tot, dur });
   saveHist(hist);
   mascot(pct >= 50 ? 'ok' : 'boom');
   $('#resultBox').innerHTML = '<div class="mwrap">' + document.querySelector('#home .mascot').outerHTML + '</div>' + `<div class="stat">${TEST[S.test]} · ${DIFF[S.diff].lbl} – „${DIFF[S.diff].t}“</div>
     <div class="score">${S.score} b</div>
     <div class="stat">${S.correct}/${tot} správne${S.half ? ` (+${S.half} s výhradou)` : ''} · ${pct} % · najdlhšia séria ${S.best}</div>
+    <div class="stat">⏱ Test trval ${fmtDur(dur)} (z toho premýšľanie nad odpoveďami ${fmtDur(ansDur)})</div>
     <div class="msg">${msg}</div>`;
   let mh = '';
   if (S.mistakes.length) {
@@ -1420,13 +1430,13 @@ function renderHist() {
   const best = {};
   for (const r of h) { const k = r.test + '|' + r.diff; if (!best[k] || r.score > best[k].score) best[k] = r; }
   let html = '<h3 style="margin:8px 0 0">Najlepšie skóre</h3><div class="best">';
-  for (const t of [1, 2]) for (const d of Object.keys(DIFF)) {
+  for (const t of [1, 2, 3]) for (const d of Object.keys(DIFF)) {
     const b = best[t + '|' + d]; if (!b) continue;
     html += `<div><small>${TEST[t]} · ${DIFF[d].lbl}</small><b>${b.score} b</b> <small>${b.correct}/${b.total}</small></div>`;
   }
   html += '</div><h3 style="margin:8px 0">Všetky pokusy</h3>';
   const fmt = ts => { const d = new Date(ts); return d.toLocaleDateString('sk-SK') + ' ' + d.toLocaleTimeString('sk-SK', { hour: '2-digit', minute: '2-digit' }); };
-  for (const r of h) html += `<div class="hrow"><div>${TEST[r.test]} · ${DIFF[r.diff].lbl}<small>${fmt(r.ts)}</small></div><div class="p">${r.score} b<small>${r.correct}/${r.total}${r.half ? ' +' + r.half + '½' : ''}</small></div></div>`;
+  for (const r of h) html += `<div class="hrow"><div>${TEST[r.test]} · ${DIFF[r.diff].lbl}<small>${fmt(r.ts)}${r.dur ? ' · ⏱ ' + fmtDur(r.dur) : ''}</small></div><div class="p">${r.score} b<small>${r.correct}/${r.total}${r.half ? ' +' + r.half + '½' : ''}</small></div></div>`;
   html += '<button class="danger" id="clr">Vymazať históriu</button>';
   $('#histBox').innerHTML = html;
   $('#clr').addEventListener('click', function () {
@@ -1440,9 +1450,10 @@ function renderHist() {
   const K = 'chemia_dedic';
   let on = false;
   try {
-    if (location.hash === '#dcera') { localStorage.setItem(K, '1'); history.replaceState(null, '', location.pathname + location.search); }
-    on = localStorage.getItem(K) === '1';
-  } catch (e) { on = location.hash === '#dcera'; }
+    const want = window.CHEMIA_DEDIC || /dcera|dcéra/i.test(decodeURIComponent(location.hash + location.search));
+    if (want) localStorage.setItem(K, '1');
+    on = !!window.CHEMIA_DEDIC || localStorage.getItem(K) === '1';
+  } catch (e) { on = !!window.CHEMIA_DEDIC || /dcera/i.test(location.hash); }
   $('#dedic').hidden = !on;
   // záloha: 5× ťuknúť na nadpis zapne/vypne venovanie
   let taps = 0, tt = null;
@@ -1542,6 +1553,21 @@ $('#btnInstall').addEventListener('click', async () => {
       panelMsg(r && r.outcome === 'accepted' ? 'Hotovo! Ikona je na ploche.' : 'Nevadí, chémia počká. Ako vždy.', r && r.outcome !== 'accepted');
     } catch (e) { panelMsg('Inštalácia sa nespustila. Skús cez menu ⋮ → Inštalovať aplikáciu.', true); }
   });
+});
+
+/* ---------- aktualizácia ---------- */
+try { $('#ver').textContent = 'verzia ' + (window.CHEMIA_VERSION || '?'); } catch (e) {}
+$('#btnUpdate').addEventListener('click', async function () {
+  this.disabled = true; this.textContent = '⏳ Sťahujem novú verziu…';
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.update().catch(() => {})));
+    }
+    if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); }
+  } catch (e) {}
+  const url = location.pathname + '?v=' + Date.now() + location.hash;
+  setTimeout(() => location.replace(url), 300);
 });
 
 /* ---------- PWA ---------- */
