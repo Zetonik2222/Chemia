@@ -177,6 +177,27 @@ footer{color:var(--muted);text-align:center;font-size:.8rem;margin-top:26px;opac
 footer .ver{display:block;margin-top:4px;font-size:.72rem}
 .dedic.top{display:block;margin:0 auto 10px;max-width:300px;font-size:1.1rem;font-weight:700}
 
+/* --- ocino --- */
+.ocino{position:fixed;right:max(6px,env(safe-area-inset-right));bottom:0;width:138px;z-index:60;pointer-events:none;transform:translateY(115%);transition:transform .45s cubic-bezier(.2,1.4,.4,1)}
+.ocino.show{transform:translateY(0)}
+.ocino .ocsvg{display:block;width:100%;height:auto}
+.ocino .v{display:none}
+.ocino.mock .v-mock,.ocino.yawn .v-yawn,.ocino.proud .v-proud{display:inline}
+.ocino.mock .obody{animation:lgh .42s ease-in-out infinite;transform-origin:80px 190px}
+@keyframes lgh{0%,100%{transform:rotate(0)}50%{transform:rotate(-2.5deg) translateY(-2px)}}
+.ocino.mock .fing{animation:fing .7s ease-in-out infinite;transform-origin:118px 140px}
+@keyframes fing{0%,100%{transform:rotate(0)}50%{transform:rotate(-6deg)}}
+.ocino .ha text{animation:ha 1.1s ease-out infinite;opacity:0}
+.ocino .ha text:nth-child(2){animation-delay:.35s}.ocino .ha text:nth-child(3){animation-delay:.7s}
+@keyframes ha{0%{opacity:0;transform:translate(0,0)}25%{opacity:1}100%{opacity:0;transform:translate(-8px,-16px)}}
+.ocino .zz text{animation:ha 1.8s ease-out infinite;opacity:0}
+.ocino .zz text:nth-child(2){animation-delay:.6s}.ocino .zz text:nth-child(3){animation-delay:1.2s}
+.ocino .tear{animation:tr 1.1s ease-in infinite}
+@keyframes tr{0%{opacity:0;transform:translateY(0)}30%{opacity:1}100%{opacity:0;transform:translateY(10px)}}
+.ocbub{position:absolute;right:104px;bottom:118px;width:max-content;max-width:min(230px,58vw);background:var(--panel);border:3px solid var(--neon);border-radius:16px;padding:9px 13px;font-weight:800;font-size:1.02rem;line-height:1.3;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.45);transform:scale(.6);opacity:0;transform-origin:bottom right;transition:transform .3s .25s cubic-bezier(.2,1.5,.4,1),opacity .2s .25s}
+.ocino.show .ocbub{transform:scale(1);opacity:1}
+.ocbub::after{content:"";position:absolute;right:-12px;bottom:14px;border:9px solid transparent;border-left-color:var(--neon)}
+
 /* ===== ružovo-fialová téma: „nenávidím chémiu“ ===== */
 :root{
   --bg:#13071a; --panel:#211029; --panel2:#2c1536; --line:#43204f;
@@ -226,7 +247,7 @@ footer{opacity:.85}
 .sticker{right:-40px;top:-6px}
 
 </style>
-<script>window.CHEMIA_VERSION='18. 11. 2026 16:28'</script>
+<script>window.CHEMIA_VERSION='18. 11. 2026 16:49'</script>
 </head>
 <body>
 <div class="app">
@@ -372,6 +393,70 @@ footer{opacity:.85}
 </section>
 
 </div>
+<div class="ocino" id="ocino" aria-live="polite"><div class="ocbub" id="ocBub"></div><svg class="ocsvg" viewBox="0 0 160 190" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+ <g class="v v-mock ha" font-family="Arial" font-weight="bold" fill="#ff4fa3"><text x="6" y="40" font-size="15">ha</text><text x="14" y="22" font-size="12" fill="#d77dff">ha</text><text x="2" y="62" font-size="11">ha</text></g>
+ <g class="v v-yawn zz" font-family="Arial" font-weight="bold" fill="#b56bff"><text x="8" y="44" font-size="15">z</text><text x="18" y="28" font-size="12">z</text><text x="26" y="14" font-size="10">z</text></g>
+ <g class="obody">
+  <path d="M46 196 Q48 128 80 120 Q112 128 114 196 Z" fill="#2a1030" stroke="#ff4fa3" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M64 124 Q80 140 96 124" fill="#211029" stroke="#ff4fa3" stroke-width="2.5"/>
+  <path d="M74 134 q-2 14 0 22 M86 134 q2 14 0 22" fill="none" stroke="#fde9f4" stroke-width="2" stroke-linecap="round"/>
+  <path d="M80 160 l9 5 v11 l-9 5 l-9 -5 v-11 z" fill="none" stroke="#ff4fa3" stroke-width="2.2"/>
+  <path d="M72 162 l16 16 M88 162 l-16 16" stroke="#fde9f4" stroke-width="2.2" stroke-linecap="round"/>
+  <rect x="71" y="104" width="18" height="20" fill="#e8b48d"/>
+  <g class="ohead">
+   <ellipse cx="46" cy="78" rx="6" ry="9" fill="#e8b48d" stroke="#c9906b" stroke-width="2"/>
+   <ellipse cx="114" cy="78" rx="6" ry="9" fill="#e8b48d" stroke="#c9906b" stroke-width="2"/>
+   <ellipse cx="80" cy="76" rx="33" ry="39" fill="#f1c9a5" stroke="#c9906b" stroke-width="2.4"/>
+   <path d="M47 70 Q42 24 78 19 Q120 15 115 66 Q110 47 96 42 Q99 54 89 54 Q87 42 77 44 Q77 54 66 54 Q64 46 56 47 Q51 54 47 70 Z" fill="#f6d365" stroke="#c9952a" stroke-width="2.4" stroke-linejoin="round"/>
+   <path d="M69 21 Q78 3 90 16 Q99 5 108 24" fill="#f6d365" stroke="#c9952a" stroke-width="2.4" stroke-linejoin="round"/>
+   <path d="M58 33 Q70 26 84 31" fill="none" stroke="#fff3c4" stroke-width="2.6" stroke-linecap="round"/>
+   <rect x="53" y="62" width="23" height="18" rx="6" fill="#fff" stroke="#2a1030" stroke-width="3.3"/>
+   <rect x="84" y="62" width="23" height="18" rx="6" fill="#fff" stroke="#2a1030" stroke-width="3.3"/>
+   <path d="M76 70 q4 -3 8 0" fill="none" stroke="#2a1030" stroke-width="3.2"/>
+   <line x1="53" y1="68" x2="45" y2="65" stroke="#2a1030" stroke-width="2.8"/><line x1="107" y1="68" x2="115" y2="65" stroke="#2a1030" stroke-width="2.8"/>
+   <ellipse cx="56" cy="94" rx="6" ry="3.6" fill="#ff9fc8" opacity=".6"/><ellipse cx="104" cy="94" rx="6" ry="3.6" fill="#ff9fc8" opacity=".6"/>
+   
+   <g class="v v-mock">
+    <path d="M56 57 L72 53 M104 57 L88 53" stroke="#c9952a" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M58 74 q6 -7 12 0 M90 74 q6 -7 12 0" fill="none" stroke="#2a1030" stroke-width="2.8" stroke-linecap="round"/>
+    <path class="tear" d="M52 82 q-3 5 0 8 q3 -3 0 -8" fill="#7ad3ff"/>
+    <path d="M65 94 Q80 116 95 94 Z" fill="#7a1f4a" stroke="#2a1030" stroke-width="2.8" stroke-linejoin="round"/>
+    <path d="M68 95 h24 v4 h-24 z" fill="#fff"/>
+   </g>
+   
+   <g class="v v-yawn">
+    <path d="M56 56 L72 58 M104 56 L88 58" stroke="#c9952a" stroke-width="3" stroke-linecap="round"/>
+    <path d="M58 73 q6 4 12 0 M90 73 q6 4 12 0" fill="none" stroke="#2a1030" stroke-width="2.8" stroke-linecap="round"/>
+    <ellipse cx="80" cy="100" rx="9" ry="12" fill="#7a1f4a" stroke="#2a1030" stroke-width="2.8"/>
+   </g>
+   
+   <g class="v v-proud">
+    <path d="M56 58 L72 57 M102 50 L88 56" stroke="#c9952a" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="64" cy="72" r="3.6" fill="#2a1030"/><circle cx="96" cy="70" r="3.6" fill="#2a1030"/>
+    <rect x="55" y="63" width="20" height="6" rx="2" fill="#f1c9a5"/>
+    <path d="M68 99 Q82 104 94 94" fill="none" stroke="#2a1030" stroke-width="3" stroke-linecap="round"/>
+   </g>
+  </g>
+  
+  <g class="v v-mock fing">
+   <path d="M108 140 Q126 124 130 104" fill="none" stroke="#2a1030" stroke-width="15" stroke-linecap="round"/>
+   <rect x="118" y="88" width="26" height="22" rx="8" fill="#f1c9a5" stroke="#c9906b" stroke-width="2"/>
+   <rect x="127" y="60" width="9" height="34" rx="4.5" fill="#f1c9a5" stroke="#c9906b" stroke-width="2"/>
+   <path d="M121 90 q3 -5 6 0 M137 90 q3 -5 6 0" fill="none" stroke="#c9906b" stroke-width="2"/>
+  </g>
+  <g class="v v-yawn">
+   <path d="M56 160 Q66 130 76 112" fill="none" stroke="#2a1030" stroke-width="15" stroke-linecap="round"/>
+   <ellipse cx="80" cy="106" rx="13" ry="9" fill="#f1c9a5" stroke="#c9906b" stroke-width="2"/>
+  </g>
+  <g class="v v-proud">
+   <path d="M54 168 Q80 156 108 166" fill="none" stroke="#2a1030" stroke-width="15" stroke-linecap="round"/>
+   <path d="M54 168 Q80 156 108 166" fill="none" stroke="#ff4fa3" stroke-width="2" opacity=".5"/>
+   <path d="M106 166 Q80 176 54 166" fill="none" stroke="#2a1030" stroke-width="14" stroke-linecap="round"/>
+   <circle cx="112" cy="160" r="7" fill="#f1c9a5" stroke="#c9906b" stroke-width="2"/>
+   <rect x="109" y="144" width="7" height="14" rx="3.5" fill="#f1c9a5" stroke="#c9906b" stroke-width="2"/>
+  </g>
+ </g>
+</svg></div>
 <script>
 /* ===== chémia – jadro: generovanie a názvoslovie alkénov ===== */
 (function (root) {
@@ -1178,6 +1263,20 @@ const BAD = ['Nevadí, aj Mendelejev mal zlé dni.', 'Chémia 1 : Ty 0. Zatiaľ.
 const TIMEOUT = ['Čas vypršal. Chémia vyhrala na body.', 'Tik-tak… a je po čase.', 'Zamyslela si sa tak hlboko, že čas ušiel.'];
 const STREAK = { 3: '3 za sebou?! Začínaš sa učiť. Fuj.', 5: '5 za sebou. Toto už nie je náhoda.', 7: '7 za sebou. Chémia hľadá iný predmet, ktorý by ťa trápil.', 10: 'Desať z desiatich v rade. Kto si a čo si urobila s mojou dcérou?' };
 
+/* ---------- ocino ---------- */
+const OC_BAD = ['Hahaha, toto fakt nie. Skús ešte raz, princezná.', 'Aj banka sa hanbí. A to je len sklo.', 'Toto si si vymyslela, priznaj sa.', 'KOKOTINA.', 'Ty hňup!', 'To je výmysel tak ako voda v kolene.', 'Zas zle, píšem si.', 'Ty budeš chcieť žuvak!'];
+const OC_TIME = ['Tak to si dojebala!'];
+const OC_PROUD = ['No vidíš, keď chceš.', 'Náhoda. Určite náhoda.', 'Isto si podvádzala!', 'Konečne ty RIŤ!', 'Haleluja!!', 'Konečne môžem byť trošku hrdý!'];
+let ocT = null, ocLast = '';
+function ocPick(a) { let t; do { t = a[Math.floor(Math.random() * a.length)]; } while (a.length > 1 && t === ocLast); ocLast = t; return t; }
+function ocino(mode, text, ms) {
+  const el = document.getElementById('ocino'); if (!el) return;
+  el.className = 'ocino ' + mode; document.getElementById('ocBub').textContent = text;
+  void el.offsetWidth; el.classList.add('show');
+  clearTimeout(ocT); ocT = setTimeout(() => el.classList.remove('show'), ms || 4200);
+}
+function ocinoHide() { clearTimeout(ocT); const el = document.getElementById('ocino'); if (el) el.classList.remove('show'); }
+
 /* ---------- úložisko ---------- */
 const KEY = 'chemia_history_v1';
 function loadHist() { try { const h = JSON.parse(localStorage.getItem(KEY)) || []; h.forEach(r => { if (!r.v) { r.score = Math.round(r.score / 10); r.v = 2; } }); return h; } catch (e) { return []; } }
@@ -1195,6 +1294,7 @@ function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
   window.scrollTo(0, 0);
   if (id === 'home') mascot(null);
+  ocinoHide();
 }
 document.addEventListener('click', e => {
   const go = e.target.closest('[data-go]');
@@ -1271,6 +1371,7 @@ function header() {
 function renderQ() {
   const q = S.qs[S.i];
   mascot(null);
+  ocinoHide();
   header();
   $('#feedback').innerHTML = '';
   if (q.test === 1) {
@@ -1364,9 +1465,11 @@ function answer(choice, timeout) {
   else if (verdict === 'timeout') { head = 'Čas vypršal ⏰'; snark = pick(TIMEOUT); cls = 'bad'; }
   else { head = 'Nesprávne ✗'; snark = pick(BAD); cls = 'bad'; }
   if (good && STREAK[S.streak]) snark = STREAK[S.streak];
+  if (verdict === 'wrong') { ocino('mock', ocPick(OC_BAD)); snark = ''; }
+  else if (verdict === 'timeout') { ocino('yawn', ocPick(OC_TIME)); snark = ''; }
 
   const bd = C.breakdown(q.m).map(l => `<li>${esc(l)}</li>`).join('');
-  let html = `<div class="fb ${cls}"><span class="pts${pts ? '' : ' zero'}">+${pts}</span><div class="head">${head}</div><div class="snark">${esc(snark)}</div>`;
+  let html = `<div class="fb ${cls}"><span class="pts${pts ? '' : ' zero'}">+${pts}</span><div class="head">${head}</div>${snark ? `<div class="snark">${esc(snark)}</div>` : ''}`;
   if (note) html += `<div class="ans">${esc(note)}</div>`;
   if (!good) {
     if (q.test === 1) html += `<div class="ans">Správne: <b>${esc(q.m.name)}</b>${q.typed && yours ? `<br><span style="color:var(--muted)">Ty: ${esc(yours)}</span>` : ''}</div>`;
@@ -1422,6 +1525,7 @@ function finish() {
   $('#mistakes').innerHTML = mh;
   show('results');
   mascot(pct >= 50 ? 'ok' : 'boom');
+  if (S.correct >= 7) setTimeout(() => ocino('proud', ocPick(OC_PROUD), 7000), 500);
 }
 
 /* ---------- história ---------- */
