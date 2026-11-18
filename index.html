@@ -162,6 +162,18 @@ details.more summary{color:var(--muted);cursor:pointer}
 @keyframes blink{0%,92%,100%{transform:none}95%{transform:translateY(5px)}}
 footer{color:var(--muted);text-align:center;font-size:.8rem;margin-top:26px;opacity:.7}
 
+.tools{margin-top:10px}
+#panel:empty{display:none}
+.panel{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:12px;animation:fade .2s ease;line-height:1.45}
+.panel h3{margin:0 0 6px;font-size:1.1rem}
+.panel p{margin:6px 0;color:var(--muted)}
+.panel .acts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.panel .acts button{width:100%}
+.panel ol{margin:6px 0;padding-left:20px}
+.panel .msg{margin-top:10px;font-weight:700;color:var(--neon)}
+.panel .msg.err{color:var(--bad)}
+.panel .x{float:right;background:none;border:0;color:var(--muted);font-size:1.2rem;padding:0 4px}
+
 /* ===== ružovo-fialová téma: „nenávidím chémiu“ ===== */
 :root{
   --bg:#13071a; --panel:#211029; --panel2:#2c1536; --line:#43204f;
@@ -251,6 +263,12 @@ footer{opacity:.85}
     <button class="ghost" id="btnHist">📜 Záznam utrpenia</button>
     <button class="ghost" id="btnCheat">📄 Ťahák</button>
   </div>
+  <div class="row tools">
+    <button class="ghost" id="btnBackup">💾 Zálohovať</button>
+    <button class="ghost" id="btnInstall">📲 Nainštalovať</button>
+  </div>
+  <div id="panel"></div>
+  <input type="file" id="restoreFile" accept=".json,application/json" hidden>
   <footer>Vyrobené s 💜 k dcére a 💔 k chémii</footer>
 </section>
 
@@ -1433,6 +1451,98 @@ function renderHist() {
     if (taps >= 5) { taps = 0; on = !on; try { localStorage.setItem(K, on ? '1' : '0'); } catch (e) {} $('#dedic').hidden = !on; }
   });
 })();
+
+/* ---------- záloha ---------- */
+const panel = $('#panel');
+function closePanel() { panel.innerHTML = ''; }
+function panelMsg(t, err) { const m = panel.querySelector('.msg'); if (m) { m.textContent = t; m.classList.toggle('err', !!err); } }
+function backupData() {
+  let dedic = null; try { dedic = localStorage.getItem('chemia_dedic'); } catch (e) {}
+  return { app: 'chemia', v: 1, ts: Date.now(), history: loadHist(), dedic };
+}
+function backupName() { const d = new Date(); const z = n => String(n).padStart(2, '0'); return `chemia-zaloha-${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}.json`; }
+$('#btnBackup').addEventListener('click', () => {
+  if (panel.dataset.k === 'b' && panel.innerHTML) { closePanel(); return; }
+  panel.dataset.k = 'b';
+  const n = loadHist().length;
+  const canShare = !!(navigator.canShare && window.File);
+  panel.innerHTML = `<div class="panel"><button class="x" data-close>✕</button><h3>💾 Záloha</h3>
+    <p>Uloží históriu skóre (${n} ${n === 1 ? 'pokus' : n >= 2 && n <= 4 ? 'pokusy' : 'pokusov'}) do súboru. Hodí sa pri výmene mobilu alebo pred odinštalovaním.</p>
+    <div class="acts">
+      <button class="primary" id="bkSave">Uložiť zálohu do súboru</button>
+      ${canShare ? '<button class="ghost" id="bkShare">Poslať zálohu (WhatsApp, Disk, e-mail…)</button>' : ''}
+      <button class="ghost" id="bkLoad">Obnoviť zo zálohy</button>
+    </div><div class="msg"></div></div>`;
+  panel.querySelector('[data-close]').addEventListener('click', closePanel);
+  $('#bkSave').addEventListener('click', () => {
+    try {
+      const blob = new Blob([JSON.stringify(backupData(), null, 1)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = backupName();
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      panelMsg('Záloha uložená do Stiahnutých súborov. Utrpenie je v bezpečí.');
+    } catch (e) { panelMsg('Uloženie sa nepodarilo.', true); }
+  });
+  const sh = $('#bkShare');
+  if (sh) sh.addEventListener('click', async () => {
+    try {
+      const f = new File([JSON.stringify(backupData(), null, 1)], backupName(), { type: 'application/json' });
+      if (!navigator.canShare({ files: [f] })) { panelMsg('Tento mobil neumožňuje poslať súbor. Použi „Uložiť zálohu do súboru“.', true); return; }
+      await navigator.share({ files: [f], title: 'chémia – záloha' });
+      panelMsg('Záloha odoslaná.');
+    } catch (e) { if (e && e.name !== 'AbortError') panelMsg('Poslanie sa nepodarilo.', true); }
+  });
+  $('#bkLoad').addEventListener('click', () => { $('#restoreFile').value = ''; $('#restoreFile').click(); });
+});
+$('#restoreFile').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const d = JSON.parse(rd.result);
+      if (!d || d.app !== 'chemia' || !Array.isArray(d.history)) throw new Error('bad');
+      const cur = loadHist(), seen = new Set(cur.map(r => r.ts + '|' + r.score));
+      let added = 0;
+      for (const r of d.history) {
+        if (!r || typeof r.ts !== 'number' || typeof r.score !== 'number' || !TEST[r.test] || !DIFF[r.diff]) continue;
+        const k = r.ts + '|' + r.score; if (seen.has(k)) continue; seen.add(k); cur.push(r); added++;
+      }
+      cur.sort((a, b) => b.ts - a.ts); saveHist(cur);
+      if (d.dedic === '1') { try { localStorage.setItem('chemia_dedic', '1'); } catch (er) {} $('#dedic').hidden = false; }
+      panelMsg(added ? `Obnovené: ${added} ${added === 1 ? 'pokus' : added <= 4 ? 'pokusy' : 'pokusov'}. Utrpenie je späť.` : 'Všetko zo zálohy tu už bolo, nič nové.');
+    } catch (er) { panelMsg('Toto nie je záloha z chémie. Skús iný súbor.', true); }
+  };
+  rd.readAsText(f);
+});
+
+/* ---------- inštalácia ---------- */
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; });
+const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function syncInstallBtn() { if (isStandalone()) { $('#btnInstall').textContent = '✓ Nainštalované'; } }
+syncInstallBtn();
+window.addEventListener('appinstalled', () => { installEvt = null; syncInstallBtn(); if (panel.dataset.k === 'i') panelMsg('Hotovo! Ikona je na ploche. Chémia sa ti nasťahovala do mobilu. 😩'); });
+$('#btnInstall').addEventListener('click', async () => {
+  if (panel.dataset.k === 'i' && panel.innerHTML) { closePanel(); return; }
+  panel.dataset.k = 'i';
+  let body;
+  if (isStandalone()) body = '<p>Apka už je nainštalovaná a práve ju používaš. Niet úniku.</p>';
+  else if (installEvt) {
+    body = '<p>Pridá ikonu na plochu. Apka potom pôjde aj bez internetu a skóre zostane v mobile.</p><div class="acts"><button class="primary" id="doInstall">Nainštalovať na plochu</button></div>';
+  } else if (isIOS()) {
+    body = '<p>Na iPhone to ide cez Safari:</p><ol><li>Otvor túto stránku v <b>Safari</b>.</li><li>Ťukni na <b>Zdieľať</b> (štvorec so šípkou).</li><li>Zvoľ <b>Pridať na plochu</b> a potvrď <b>Pridať</b>.</li></ol>';
+  } else {
+    body = '<p>V Chrome na Androide:</p><ol><li>Ťukni vpravo hore na <b>⋮</b>.</li><li>Zvoľ <b>Inštalovať aplikáciu</b> alebo <b>Pridať na plochu</b>.</li><li>Potvrď.</li></ol><p>Ak to tam nie je, otvor stránku v Chrome (nie v Messengeri či Instagrame).</p>';
+  }
+  panel.innerHTML = `<div class="panel"><button class="x" data-close>✕</button><h3>📲 Nainštalovať</h3>${body}<div class="msg"></div></div>`;
+  panel.querySelector('[data-close]').addEventListener('click', closePanel);
+  const di = $('#doInstall');
+  if (di) di.addEventListener('click', async () => {
+    try { installEvt.prompt(); const r = await installEvt.userChoice; installEvt = null;
+      panelMsg(r && r.outcome === 'accepted' ? 'Hotovo! Ikona je na ploche.' : 'Nevadí, chémia počká. Ako vždy.', r && r.outcome !== 'accepted');
+    } catch (e) { panelMsg('Inštalácia sa nespustila. Skús cez menu ⋮ → Inštalovať aplikáciu.', true); }
+  });
+});
 
 /* ---------- PWA ---------- */
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
