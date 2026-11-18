@@ -36,6 +36,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .hero .mascot{width:130px;height:auto}
 h1.logo{font-size:3.2rem;margin:4px 0 0;letter-spacing:.02em;color:var(--neon);text-shadow:0 0 18px rgba(124,255,79,.45);font-weight:800}
 .tag{color:var(--muted);margin:4px 0 14px;font-style:italic}
+.dedic[hidden]{display:none}
 .dedic{margin:0 auto 22px;padding:10px 14px;border:1px dashed rgba(124,255,79,.35);border-radius:12px;display:inline-block;line-height:1.6;font-size:1.02rem}
 .big{display:block;width:100%;text-align:left;background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:16px 18px;margin:0 0 12px;transition:transform .1s,border-color .2s}
 .big:hover{border-color:var(--neon)}
@@ -193,7 +194,7 @@ footer{color:var(--muted);text-align:center;font-size:.8rem;margin-top:26px;opac
 </svg>
     <h1 class="logo">chémia</h1>
     <p class="tag">Prežiť alkény. Nič viac nežiadame.</p>
-    <p class="dedic">Od ocina pre dcéru 👸🏿<br>Odteraz aspoň trojky 🤞</p>
+    <p class="dedic" id="dedic" hidden>Od ocina pre dcéru 👸🏿<br>Odteraz aspoň trojky 🤞</p>
   </div>
   <button class="big" data-test="1"><span class="badge">🧪</span><span class="bt">Vzorec → názov</span><span class="bs">Pozri vzorec, vymysli meno. Raz klikáš, raz píšeš.</span></button>
   <button class="big" data-test="2"><span class="badge">🔬</span><span class="bt">Názov → vzorec</span><span class="bs">Máš meno, nájdi ten správny vzorec zo štyroch.</span></button>
@@ -1366,6 +1367,23 @@ function renderHist() {
     else { this.dataset.sure = '1'; this.textContent = 'Naozaj? Klikni znova a utrpenie zmizne.'; }
   });
 }
+
+/* ---------- venovanie (len cez odkaz #dcera) ---------- */
+(function () {
+  const K = 'chemia_dedic';
+  let on = false;
+  try {
+    if (location.hash === '#dcera') { localStorage.setItem(K, '1'); history.replaceState(null, '', location.pathname + location.search); }
+    on = localStorage.getItem(K) === '1';
+  } catch (e) { on = location.hash === '#dcera'; }
+  $('#dedic').hidden = !on;
+  // záloha: 5× ťuknúť na nadpis zapne/vypne venovanie
+  let taps = 0, tt = null;
+  document.querySelector('h1.logo').addEventListener('click', () => {
+    taps++; clearTimeout(tt); tt = setTimeout(() => taps = 0, 1500);
+    if (taps >= 5) { taps = 0; on = !on; try { localStorage.setItem(K, on ? '1' : '0'); } catch (e) {} $('#dedic').hidden = !on; }
+  });
+})();
 
 /* ---------- PWA ---------- */
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
