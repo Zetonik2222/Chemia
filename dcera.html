@@ -175,6 +175,7 @@ footer{color:var(--muted);text-align:center;font-size:.8rem;margin-top:26px;opac
 .panel .x{float:right;background:none;border:0;color:var(--muted);font-size:1.2rem;padding:0 4px}
 .upd{width:100%;margin-top:10px;font-size:.95rem;padding:10px}
 footer .ver{display:block;margin-top:4px;font-size:.72rem}
+.dedic.top{display:block;margin:0 auto 10px;max-width:300px;font-size:1.1rem;font-weight:700}
 
 /* ===== ružovo-fialová téma: „nenávidím chémiu“ ===== */
 :root{
@@ -225,8 +226,7 @@ footer{opacity:.85}
 .sticker{right:-40px;top:-6px}
 
 </style>
-<script>window.CHEMIA_VERSION='18. 11. 2026 16:21'</script>
-<script>window.CHEMIA_DEDIC=true</script>
+<script>window.CHEMIA_VERSION='18. 11. 2026 16:28'</script>
 </head>
 <body>
 <div class="app">
@@ -235,6 +235,7 @@ footer{opacity:.85}
 <!-- DOMOV -->
 <section id="home" class="screen on">
   <div class="hero">
+    <p class="dedic top" id="dedic">Od ocina pre dcéru 👸🏿 lebo piču vie<br>Odteraz aspoň trojky 🤞</p>
     <svg class="mascot" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
  <g class="smoke" fill="#9aa59c"><circle cx="48" cy="10" r="9"/><circle cx="64" cy="4" r="11"/><circle cx="78" cy="12" r="8"/></g>
  <path d="M46 14 h28 v32 l30 60 a14 14 0 0 1 -12.5 21 h-63 a14 14 0 0 1 -12.5 -21 l30 -60 z" fill="#2a1030"/>
@@ -259,7 +260,6 @@ footer{opacity:.85}
 <text x="86" y="44" font-size="22">💢</text></svg>
     <div class="logo-wrap"><h1 class="logo">chémia</h1><span class="sticker">FUJ!</span></div>
     <p class="tag">Prežiť alkény. Nič viac nežiadame.</p><span class="hate" id="hate"></span>
-    <p class="dedic" id="dedic">Od ocina pre dcéru 👸🏿<br>Odteraz aspoň trojky 🤞</p>
   </div>
   <button class="big" data-test="1"><span class="badge">🧪</span><span class="bt">Vzorec → názov</span><span class="bs">Pozri vzorec, vymysli meno. Raz klikáš, raz píšeš.</span></button>
   <button class="big" data-test="2"><span class="badge">🔬</span><span class="bt">Názov → vzorec</span><span class="bs">Máš meno, nájdi ten správny vzorec zo štyroch.</span></button>
@@ -372,7 +372,8 @@ footer{opacity:.85}
 </section>
 
 </div>
-<script>/* ===== chémia – jadro: generovanie a názvoslovie alkénov ===== */
+<script>
+/* ===== chémia – jadro: generovanie a názvoslovie alkénov ===== */
 (function (root) {
 'use strict';
 
@@ -1445,23 +1446,8 @@ function renderHist() {
   });
 }
 
-/* ---------- venovanie (len cez odkaz #dcera) ---------- */
-(function () {
-  const K = 'chemia_dedic';
-  let on = false;
-  try {
-    const want = window.CHEMIA_DEDIC || /dcera|dcéra/i.test(decodeURIComponent(location.hash + location.search));
-    if (want) localStorage.setItem(K, '1');
-    on = !!window.CHEMIA_DEDIC || localStorage.getItem(K) === '1';
-  } catch (e) { on = !!window.CHEMIA_DEDIC || /dcera/i.test(location.hash); }
-  $('#dedic').hidden = !on;
-  // záloha: 5× ťuknúť na nadpis zapne/vypne venovanie
-  let taps = 0, tt = null;
-  document.querySelector('h1.logo').addEventListener('click', () => {
-    taps++; clearTimeout(tt); tt = setTimeout(() => taps = 0, 1500);
-    if (taps >= 5) { taps = 0; on = !on; try { localStorage.setItem(K, on ? '1' : '0'); } catch (e) {} $('#dedic').hidden = !on; }
-  });
-})();
+/* ---------- venovanie: vždy ---------- */
+$('#dedic').hidden = false;
 
 /* ---------- záloha ---------- */
 const panel = $('#panel');
