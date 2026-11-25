@@ -263,22 +263,123 @@ footer{opacity:.85}
 .logo-wrap::after{height:5px;opacity:.8;top:56%}
 .sticker{right:-40px;top:-6px}
 
+/* ===== viac nenávisti ===== */
+body{background-image:radial-gradient(1200px 600px at 10% -10%, rgba(255,79,163,.18), transparent 60%),radial-gradient(900px 600px at 110% 20%, rgba(181,107,255,.16), transparent 60%)}
+.doodles{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.2;overflow:hidden}
+.doodles .d{position:absolute;color:#ff4fa3;font-family:"Comic Sans MS","Segoe Print","Chalkboard SE",cursive;font-size:15px;white-space:nowrap;transform:rotate(-4deg)}
+.doodles .d:nth-child(even){transform:rotate(5deg)}
+.doodles s{text-decoration-color:#b6ff3b;text-decoration-thickness:3px}
+.doodles .er{filter:blur(1.6px);color:#bb9cb4}
+.doodles .er::after{content:"";position:absolute;left:-6px;right:-6px;top:30%;height:12px;background:rgba(253,233,244,.35);border-radius:8px;transform:rotate(-3deg)}
+.doodles .dd{position:absolute}
+.app{position:relative;z-index:1}
+/* roztrhnutý nadpis */
+.logo-wrap.torn::after{display:none}
+.logo-wrap.torn{margin-top:6px}
+.logo-wrap.torn .logo.l1{clip-path:polygon(0 0,47% 0,51% 16%,47% 38%,53% 60%,48% 82%,51% 100%,0 100%)}
+.logo-wrap.torn .logo.l2{position:absolute;left:0;top:0;margin:0;width:100%;clip-path:polygon(48% 0,100% 0,100% 100%,52% 100%,49% 82%,54% 60%,48% 38%,52% 16%);transform:translate(8px,5px) rotate(4deg)}
+.logo-wrap.torn .logo{transform-origin:center;filter:drop-shadow(0 0 14px rgba(255,79,163,.45)) drop-shadow(2px 3px 0 rgba(0,0,0,.35))}
+.logo-wrap.torn .logo.l1{transform:rotate(-2deg) skewX(-2deg)}
+.logo-wrap.torn .logo::before{content:"";position:absolute;left:-4%;right:-4%;top:56%;height:5px;border-radius:6px;background:#fde9f4;opacity:.85;transform:rotate(-6deg)}
+.tape-piece{position:absolute;left:44%;top:-6px;width:26px;height:66px;background:rgba(255,241,170,.42);border-left:1px dashed rgba(255,255,255,.35);border-right:1px dashed rgba(255,255,255,.35);transform:rotate(14deg);border-radius:2px;z-index:2}
+.sticker{z-index:3;animation:wob2 3s ease-in-out infinite}
+@keyframes wob2{0%,100%{rotate:0deg}50%{rotate:7deg}}
+.sticker.s1{right:-52px;top:-4px;transform:rotate(14deg);background:#ffe14f;color:#2a1030;box-shadow:0 3px 0 #b8941d,0 6px 14px rgba(0,0,0,.35)}
+.sticker.s2{left:-50px;top:26px;right:auto;transform:rotate(-14deg);background:#b6ff3b;color:#13071a;box-shadow:0 3px 0 #6f9e1e,0 6px 14px rgba(0,0,0,.35);animation-delay:.5s}
+.sticker.s3{right:-44px;top:56px;transform:rotate(-8deg);background:#ff3d6e;color:#fff;box-shadow:0 3px 0 #a3203f,0 6px 14px rgba(0,0,0,.35);animation-delay:1s}
+.sticker.s4{left:-40px;top:-10px;right:auto;transform:rotate(9deg);background:#7aa8ff;color:#0d1a3a;box-shadow:0 3px 0 #3e62a8,0 6px 14px rgba(0,0,0,.35);animation-delay:1.5s}
+/* banka: jazyk a dym */
+.mascot .tongue{transform-box:fill-box;transform-origin:top;animation:tg 2.2s ease-in-out infinite}
+@keyframes tg{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.25)}}
+.mascot .puff circle{opacity:0;animation:pf 5s ease-out infinite}
+.mascot .puff circle:nth-child(2){animation-delay:.25s}.mascot .puff circle:nth-child(3){animation-delay:.5s}
+@keyframes pf{0%,70%{opacity:0;transform:translateY(8px) scale(.4)}78%{opacity:.8}100%{opacity:0;transform:translateY(-16px) scale(1.5)}}
+.mascot.mini .puff{display:none}
+/* chyba: triasenie, záblesk, pečiatka */
+#quiz.shake{animation:shk .5s}
+@keyframes shk{15%{transform:translateX(-9px) rotate(-.6deg)}30%{transform:translateX(8px) rotate(.6deg)}45%{transform:translateX(-6px)}60%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.flash{position:fixed;inset:0;background:rgba(255,30,70,.28);pointer-events:none;opacity:0;z-index:55}
+.flash.on{animation:flh .55s ease-out}
+@keyframes flh{0%{opacity:1}100%{opacity:0}}
+.stamp{display:inline-block;border:3px solid var(--bad);color:var(--bad);padding:1px 10px;border-radius:6px;transform:rotate(-7deg);letter-spacing:.06em;font-weight:900;animation:stp .35s cubic-bezier(.2,1.6,.4,1)}
+@keyframes stp{from{transform:rotate(-7deg) scale(2.2);opacity:0}to{transform:rotate(-7deg) scale(1);opacity:1}}
+/* horiaci rám pri dochádzajúcom čase */
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+.prompt.burn{border:4px solid transparent;background:linear-gradient(var(--panel),var(--panel)) padding-box,conic-gradient(from var(--ang),#ff3d00,#ffb300,#ffe14f,#ff4fa3,#ff3d00) border-box;animation:burn 1.4s linear infinite;box-shadow:0 0 18px rgba(255,120,0,.45)}
+.prompt.burn2{animation-duration:.6s;box-shadow:0 0 28px rgba(255,60,0,.75)}
+@keyframes burn{to{--ang:360deg}}
+.timer.warn>i{background:linear-gradient(90deg,#ff3d00,#ffb300)}
+/* známka červeným perom */
+.result .score{display:none}
+.grade{position:relative;margin:6px auto 4px;max-width:280px;background:#fff5fa;color:#2a1030;border-radius:12px;padding:12px 10px 10px;transform:rotate(-2deg);box-shadow:0 10px 24px rgba(0,0,0,.45)}
+.grade::before{content:"";position:absolute;inset:0;border-radius:12px;background:repeating-linear-gradient(transparent 0 23px,#c8d6ff 23px 24px);opacity:.7}
+.grade::after{content:"";position:absolute;left:28px;top:0;bottom:0;width:2px;background:#ff9aa8;opacity:.8}
+.grade>*{position:relative}
+.gnum{font-family:"Comic Sans MS","Segoe Print","Chalkboard SE",cursive;color:#e0132f;font-size:3.6rem;font-weight:900;line-height:1}
+.gnum u{text-decoration-thickness:4px;text-underline-offset:6px}
+.gnote{font-family:"Comic Sans MS","Segoe Print","Chalkboard SE",cursive;color:#e0132f;font-size:1rem;margin-top:4px}
+.gpts{color:#6b4a63;font-weight:800;margin-top:4px}
+/* ťahák ako prepašovaný papierik */
+.secret{display:inline-block;margin:0 0 6px;border:3px solid var(--bad);color:var(--bad);font-weight:900;letter-spacing:.08em;padding:3px 10px;border-radius:6px;transform:rotate(-4deg)}
+.cheat section{background:#fffaf0;color:#2a1030;border:0;border-radius:4px;position:relative;
+  background-image:repeating-linear-gradient(transparent 0 25px,#cfdcff 25px 26px),linear-gradient(135deg,rgba(0,0,0,.06),transparent 30%,rgba(0,0,0,.05) 55%,transparent 70%,rgba(0,0,0,.07));
+  box-shadow:0 6px 16px rgba(0,0,0,.45);clip-path:polygon(0 2%,6% 0,30% 1.5%,55% 0,80% 1.2%,100% 0,99% 30%,100% 60%,98.5% 100%,70% 98.5%,40% 100%,12% 98.8%,0 100%,1% 60%,0 30%)}
+.cheat section:nth-of-type(odd){transform:rotate(-.8deg)}
+.cheat section:nth-of-type(even){transform:rotate(.7deg)}
+.cheat section h3{color:#c2185b}
+.cheat section code{background:#ffe3ef;color:#7a1f4a}
+.cheat section td{border-bottom-color:#e6d4df}
+.cheat section .note{border-color:#e0132f;color:#e0132f}
+.cheat > h2{color:var(--text)}
+.logo-wrap.torn{margin-bottom:10px}
+.sticker.s4{left:-30px;top:-22px}
+.sticker.s2{left:-58px;top:34px}
+
+/* plameň okolo časovača */
+.twrap{position:relative;margin-bottom:14px}
+.twrap .timer{margin-bottom:0;position:relative;z-index:1}
+.flames{position:absolute;left:-30px;right:-30px;top:-36px;bottom:-36px;pointer-events:none;opacity:0;transition:opacity .35s;z-index:2}
+.flames .fsvg{display:block;overflow:visible}
+.twrap.burn{margin:34px 18px 40px}
+.twrap.burn .flames{opacity:1}
+.flames .fglow{opacity:.55;animation:glw .4s ease-in-out infinite alternate}
+.flames .fouter{opacity:.75}
+@keyframes glw{to{opacity:.9}}
+.twrap.burn2 .flames .fouter{stroke-width:14;opacity:.9}
+.twrap.burn2 .flames .fmid{stroke-width:9}
+.twrap.burn2 .flames .fglow{stroke-width:20;animation-duration:.2s}
+.twrap.burn2 .timer{box-shadow:0 0 14px rgba(255,90,0,.9)}
+.twrap.burn .timer>i{background:linear-gradient(90deg,#ff2a00,#ff8a00,#ffcf3a)}
+
 </style>
-<script>window.CHEMIA_VERSION='25. 11. 2026 21:22'</script>
+<script>window.CHEMIA_VERSION='25. 11. 2026 21:48'</script>
 </head>
 <body>
+<div class="doodles" aria-hidden="true">
+<span class="d" style="left:3%;top:13%"><s>CH₂=CH₂</s> 🤮</span>
+<span class="d" style="left:68%;top:9%">C₆H₁₂ ??</span>
+<span class="d er" style="left:60%;top:34%">CH₃–CH=CH₂ + HBr</span>
+<span class="d" style="left:4%;top:44%">HBr → 💀</span>
+<span class="d" style="left:64%;top:58%"><s>Markovnikov</s></span>
+<span class="d er" style="left:6%;top:66%">2-metylbut-2-én</span>
+<span class="d" style="left:58%;top:78%">ΔH = moje nervy</span>
+<span class="d" style="left:5%;top:88%"><s>KMnO₄</s> fuj</span>
+<span class="d" style="left:80%;top:94%">nie.</span>
+<svg class="dd" style="left:72%;top:18%" width="90" height="90" viewBox="0 0 90 90"><g fill="none" stroke="#ff4fa3" stroke-width="2.2" stroke-linecap="round"><path d="M45 22 l20 12 v23 l-20 12 l-20 -12 v-23 z"/><circle cx="45" cy="45" r="9"/><path d="M33 20 q-6 -14 -1 -18 q2 8 8 13"/><path d="M57 20 q6 -14 1 -18 q-2 8 -8 13"/><path d="M36 52 q9 6 18 0" stroke-width="2.6"/><path d="M45 50 q-8 -2 -14 4 M45 50 q8 -2 14 4" stroke="#b6ff3b"/></g></svg>
+<svg class="dd" style="left:4%;top:24%" width="110" height="60" viewBox="0 0 110 60"><g fill="none" stroke="#ff4fa3" stroke-width="2" stroke-linecap="round"><text x="8" y="40" font-size="20" fill="#ff4fa3" stroke="none" font-family="Comic Sans MS, cursive">CH₄</text><path d="M14 18 l-6 -14 l10 9 M44 18 l6 -14 l-10 9"/><path d="M18 46 q11 8 22 0" stroke="#b6ff3b" stroke-width="2.6"/><circle cx="70" cy="30" r="3"/><path d="M78 22 q12 8 0 18" /></g></svg>
+</div>
 <div class="app">
-<div class="tape"><span>⚠ TOXICKÉ UČIVO · VSTUP NA VLASTNÉ RIZIKO ⚠</span></div>
+<div class="tape"><span>☣ TOXICKÉ UČIVO · VSTUP NA VLASTNÉ RIZIKO ☣</span></div>
 
 <!-- DOMOV -->
 <section id="home" class="screen on">
   <div class="hero">
     <p class="dedic top" id="dedic">Od ocina pre dcéru 👸🏿 lebo piču vie<br>Odteraz aspoň trojky 🤞</p>
-    <svg class="mascot" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
- <g class="smoke" fill="#9aa59c"><circle cx="48" cy="10" r="9"/><circle cx="64" cy="4" r="11"/><circle cx="78" cy="12" r="8"/></g>
+    <svg class="mascot" viewBox="0 -14 120 154" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+ <g class="puff" fill="#b6ff3b"><circle cx="56" cy="8" r="7"/><circle cx="66" cy="4" r="9"/><circle cx="62" cy="-4" r="6"/></g><g class="smoke" fill="#9aa59c"><circle cx="48" cy="10" r="9"/><circle cx="64" cy="4" r="11"/><circle cx="78" cy="12" r="8"/></g>
  <path d="M46 14 h28 v32 l30 60 a14 14 0 0 1 -12.5 21 h-63 a14 14 0 0 1 -12.5 -21 l30 -60 z" fill="#2a1030"/>
  <path d="M27.5 92 q8 -6 16 0 t16 0 t16 0 t16 0 l7 13 a10 10 0 0 1 -9 15 h-66 a10 10 0 0 1 -9 -15 z" fill="#ff4fa3" opacity=".9"/>
- <g class="bub" fill="#ffd1e8"><circle cx="45" cy="108" r="3"/><circle cx="62" cy="112" r="2.4"/><circle cx="76" cy="106" r="3.2"/></g>
+ <g class="bub" fill="#b6ff3b"><circle cx="45" cy="108" r="3"/><circle cx="62" cy="112" r="2.4"/><circle cx="76" cy="106" r="3.2"/></g>
  <path d="M46 14 h28 v32 l30 60 a14 14 0 0 1 -12.5 21 h-63 a14 14 0 0 1 -12.5 -21 l30 -60 z" fill="none" stroke="#ff4fa3" stroke-width="4" stroke-linejoin="round"/>
  <rect x="42" y="8" width="36" height="9" rx="4" fill="#ff4fa3"/>
  <g class="f-bored"><path d="M41 57 L57 64 M79 57 L63 64" stroke="#fde9f4" stroke-width="3.2" stroke-linecap="round"/>
@@ -286,7 +387,7 @@ footer{opacity:.85}
   <circle cx="51" cy="72" r="3" fill="#111"/><circle cx="71" cy="72" r="3" fill="#111"/>
   <g class="lid"><rect x="42" y="62" width="16" height="8" fill="#2a1030"/><rect x="62" y="62" width="16" height="8" fill="#2a1030"/></g>
   <line x1="43" y1="70" x2="57" y2="70" stroke="#ff4fa3" stroke-width="2"/><line x1="63" y1="70" x2="77" y2="70" stroke="#ff4fa3" stroke-width="2"/>
-  <path d="M53 84 q7 -2 14 0" stroke="#e6efe6" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <path d="M52 83 q8 4 16 0" stroke="#e6efe6" stroke-width="2.4" fill="none" stroke-linecap="round"/><path class="tongue" d="M56 85 q4 13 8 0 z" fill="#ff3d6e" stroke="#7a1f4a" stroke-width="1.5"/>
  </g>
  <g class="f-happy" stroke="#e6efe6" stroke-width="3" fill="none" stroke-linecap="round">
   <path d="M44 72 q6 -8 12 0"/><path d="M64 72 q6 -8 12 0"/><path d="M52 81 q8 7 16 0"/>
@@ -296,7 +397,7 @@ footer{opacity:.85}
   <ellipse cx="60" cy="85" rx="5" ry="4" fill="#0a0e0b" stroke="#e6efe6" stroke-width="2"/>
  </g>
 <text x="86" y="44" font-size="22">💢</text></svg>
-    <div class="logo-wrap"><h1 class="logo">chémia</h1><span class="sticker">FUJ!</span></div>
+    <div class="logo-wrap torn"><h1 class="logo l1">chémia</h1><h1 class="logo l2" aria-hidden="true">chémia</h1><span class="tape-piece"></span><span class="sticker s1">FUJ!</span><span class="sticker s2">NIE!</span><span class="sticker s3">PREČO?</span><span class="sticker s4">SOS</span></div>
     <p class="tag">Prežiť alkény. Nič viac nežiadame.</p><span class="hate" id="hate"></span>
   </div>
   <p class="pickt">Čím sa dnes budeš trápiť?</p>
@@ -328,11 +429,11 @@ footer{opacity:.85}
 <!-- KVÍZ -->
 <section id="quiz" class="screen">
   <div class="qtop">
-    <svg class="mascot mini" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
- <g class="smoke" fill="#9aa59c"><circle cx="48" cy="10" r="9"/><circle cx="64" cy="4" r="11"/><circle cx="78" cy="12" r="8"/></g>
+    <svg class="mascot mini" viewBox="0 -14 120 154" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+ <g class="puff" fill="#b6ff3b"><circle cx="56" cy="8" r="7"/><circle cx="66" cy="4" r="9"/><circle cx="62" cy="-4" r="6"/></g><g class="smoke" fill="#9aa59c"><circle cx="48" cy="10" r="9"/><circle cx="64" cy="4" r="11"/><circle cx="78" cy="12" r="8"/></g>
  <path d="M46 14 h28 v32 l30 60 a14 14 0 0 1 -12.5 21 h-63 a14 14 0 0 1 -12.5 -21 l30 -60 z" fill="#2a1030"/>
  <path d="M27.5 92 q8 -6 16 0 t16 0 t16 0 t16 0 l7 13 a10 10 0 0 1 -9 15 h-66 a10 10 0 0 1 -9 -15 z" fill="#ff4fa3" opacity=".9"/>
- <g class="bub" fill="#ffd1e8"><circle cx="45" cy="108" r="3"/><circle cx="62" cy="112" r="2.4"/><circle cx="76" cy="106" r="3.2"/></g>
+ <g class="bub" fill="#b6ff3b"><circle cx="45" cy="108" r="3"/><circle cx="62" cy="112" r="2.4"/><circle cx="76" cy="106" r="3.2"/></g>
  <path d="M46 14 h28 v32 l30 60 a14 14 0 0 1 -12.5 21 h-63 a14 14 0 0 1 -12.5 -21 l30 -60 z" fill="none" stroke="#ff4fa3" stroke-width="4" stroke-linejoin="round"/>
  <rect x="42" y="8" width="36" height="9" rx="4" fill="#ff4fa3"/>
  <g class="f-bored"><path d="M41 57 L57 64 M79 57 L63 64" stroke="#fde9f4" stroke-width="3.2" stroke-linecap="round"/>
@@ -340,7 +441,7 @@ footer{opacity:.85}
   <circle cx="51" cy="72" r="3" fill="#111"/><circle cx="71" cy="72" r="3" fill="#111"/>
   <g class="lid"><rect x="42" y="62" width="16" height="8" fill="#2a1030"/><rect x="62" y="62" width="16" height="8" fill="#2a1030"/></g>
   <line x1="43" y1="70" x2="57" y2="70" stroke="#ff4fa3" stroke-width="2"/><line x1="63" y1="70" x2="77" y2="70" stroke="#ff4fa3" stroke-width="2"/>
-  <path d="M53 84 q7 -2 14 0" stroke="#e6efe6" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <path d="M52 83 q8 4 16 0" stroke="#e6efe6" stroke-width="2.4" fill="none" stroke-linecap="round"/><path class="tongue" d="M56 85 q4 13 8 0 z" fill="#ff3d6e" stroke="#7a1f4a" stroke-width="1.5"/>
  </g>
  <g class="f-happy" stroke="#e6efe6" stroke-width="3" fill="none" stroke-linecap="round">
   <path d="M44 72 q6 -8 12 0"/><path d="M64 72 q6 -8 12 0"/><path d="M52 81 q8 7 16 0"/>
@@ -352,7 +453,7 @@ footer{opacity:.85}
 <text x="86" y="44" font-size="22">💢</text></svg>
     <div class="qinfo"><span id="qNum"></span><span><span class="streak" id="qStreak"></span> <span id="qScore"></span></span></div>
   </div>
-  <div class="timer" id="timer"><i id="timerBar"></i></div>
+  <div class="twrap" id="twrap"><div class="flames" id="flames" aria-hidden="true"></div><div class="timer" id="timer"><i id="timerBar"></i></div></div>
   <div class="prompt" id="prompt"></div>
   <div id="answers"></div>
   <div id="feedback"></div>
@@ -378,6 +479,7 @@ footer{opacity:.85}
   <button class="back" data-go="home">← späť</button>
   <h2>Ťahák</h2>
   <p class="sub">Keď už fakt nevieš. (V teste ho nepoužívaj, chémia to vidí.)</p>
+  <div class="secret">NEUKAZOVAŤ UČITEĽKE!</div>
   <section><h3>Čo sú alkény</h3>
     <ul><li>Nenasýtené uhľovodíky – majú aspoň jednu <b>dvojitú väzbu C=C</b>.</li>
     <li>S jednou dvojitou väzbou: všeobecný vzorec <code>CₙH₂ₙ</code>.</li>
@@ -446,6 +548,7 @@ footer{opacity:.85}
 </section>
 
 </div>
+<div class="flash" id="flash"></div>
 <div class="ocino" id="ocino" aria-live="polite"><div class="ocbub" id="ocBub"></div><svg class="ocsvg" viewBox="0 0 160 190" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
  <g class="v v-mock ha" font-family="Arial" font-weight="bold" fill="#ff4fa3"><text x="6" y="40" font-size="15">ha</text><text x="14" y="22" font-size="12" fill="#d77dff">ha</text><text x="2" y="62" font-size="11">ha</text></g>
  <g class="v v-yawn zz" font-family="Arial" font-weight="bold" fill="#b56bff"><text x="8" y="44" font-size="15">z</text><text x="18" y="28" font-size="12">z</text><text x="26" y="14" font-size="10">z</text></g>
@@ -1893,6 +1996,47 @@ function startTest(test, diff) {
 }
 
 /* ---------- časovač ---------- */
+(function () {
+  const f = document.getElementById('flames'); if (!f) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  f.innerHTML = `<svg class="fsvg" xmlns="${NS}" aria-hidden="true">
+    <defs>
+      <linearGradient id="fgr" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff2a00"/><stop offset=".5" stop-color="#ff7a00"/><stop offset="1" stop-color="#ffcf3a"/></linearGradient>
+      <filter id="fireA" x="-10%" y="-80%" width="120%" height="260%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.045 0.16" numOctaves="2" seed="2" result="n">
+          <animate attributeName="seed" values="1;2;3;4;5;6;7;8" dur="0.55s" repeatCount="indefinite" calcMode="discrete"/>
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G"/>
+        <feGaussianBlur stdDeviation="0.8"/>
+      </filter>
+      <filter id="fireB" x="-10%" y="-80%" width="120%" height="260%">
+        <feTurbulence type="turbulence" baseFrequency="0.03 0.11" numOctaves="2" seed="5" result="n">
+          <animate attributeName="baseFrequency" values="0.03 0.11;0.036 0.13;0.028 0.1;0.03 0.11" dur="0.9s" repeatCount="indefinite"/>
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G" result="d"/>
+        <feOffset in="d" dy="-5" result="u"/>
+        <feMerge><feMergeNode in="u"/><feMergeNode in="d"/></feMerge>
+        <feGaussianBlur stdDeviation="1.4"/>
+      </filter>
+      <filter id="glow" x="-20%" y="-150%" width="140%" height="400%"><feGaussianBlur stdDeviation="6"/></filter>
+    </defs>
+    <rect class="fglow" rx="18" fill="none" stroke="#ff5a00" stroke-width="14" filter="url(#glow)"/>
+    <rect class="fouter" rx="18" fill="none" stroke="#ff2a00" stroke-width="10" filter="url(#fireB)"/>
+    <rect class="fmid" rx="17" fill="none" stroke="url(#fgr)" stroke-width="7" filter="url(#fireA)"/>
+    <rect class="fcore" rx="16" fill="none" stroke="#fff1a8" stroke-width="2.5" filter="url(#fireA)"/>
+  </svg>`;
+  const svg = f.firstElementChild;
+  function size() {
+    const w = f.clientWidth, h = f.clientHeight; if (!w) return;
+    svg.setAttribute('width', w); svg.setAttribute('height', h); svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    const pad = 18;
+    svg.querySelectorAll('rect').forEach(r => { r.setAttribute('x', pad); r.setAttribute('y', pad); r.setAttribute('width', w - 2 * pad); r.setAttribute('height', h - 2 * pad); });
+  }
+  window.addEventListener('resize', size);
+  new MutationObserver(size).observe(document.getElementById('twrap'), { attributes: true, attributeFilter: ['class'] });
+  if (window.ResizeObserver) new ResizeObserver(size).observe(f);
+  setTimeout(size, 0);
+})();
 let tInt = null, tStart = 0;
 function startTimer(sec) {
   stopTimer();
@@ -1903,11 +2047,12 @@ function startTimer(sec) {
     const el = (performance.now() - tStart) / 1000, left = Math.max(0, 1 - el / sec);
     bar.style.width = (left * 100) + '%';
     box.className = 'timer' + (left < 0.15 ? ' crit' : left < 0.35 ? ' warn' : '');
+    const tw = document.getElementById('twrap'); if (tw) { tw.classList.toggle('burn', left < 0.35); tw.classList.toggle('burn2', left < 0.15); }
     if (el >= sec) { stopTimer(); answer(null, true); }
   };
   tick(); tInt = setInterval(tick, 100);
 }
-function stopTimer() { if (tInt) { clearInterval(tInt); tInt = null; } }
+function stopTimer() { if (tInt) { clearInterval(tInt); tInt = null; } const tw = document.getElementById('twrap'); if (tw) tw.classList.remove('burn', 'burn2'); }
 const elapsed = () => (performance.now() - tStart) / 1000;
 
 /* ---------- otázka ---------- */
@@ -2008,14 +2153,18 @@ function answer(choice, timeout) {
 
   const good = verdict === 'ok' || verdict === 'half';
   mascot(good ? 'ok' : 'boom');
+  if (!good) {
+    const qz = document.getElementById('quiz'); qz.classList.remove('shake'); void qz.offsetWidth; qz.classList.add('shake');
+    const fl = document.getElementById('flash'); if (fl) { fl.classList.remove('on'); void fl.offsetWidth; fl.classList.add('on'); }
+  }
   if (!good && navigator.vibrate) try { navigator.vibrate(120); } catch (e) {}
 
   const pick = a => a[Math.floor(Math.random() * a.length)];
   let head, snark, cls;
   if (verdict === 'ok') { head = 'Správne ✓'; snark = pick(OK); cls = 'ok'; }
   else if (verdict === 'half') { head = 'Uznané s výhradou'; snark = 'Polovica bodov. Pani učiteľka by asi nebola taká milá.'; cls = 'half'; }
-  else if (verdict === 'timeout') { head = 'Čas vypršal ⏰'; snark = pick(TIMEOUT); cls = 'bad'; }
-  else { head = 'Nesprávne ✗'; snark = pick(BAD); cls = 'bad'; }
+  else if (verdict === 'timeout') { head = '<span class="stamp">ČAS ⏰</span>'; snark = pick(TIMEOUT); cls = 'bad'; }
+  else { head = '<span class="stamp">ZLE ✗</span>'; snark = pick(BAD); cls = 'bad'; }
   if (good && STREAK[S.streak]) snark = STREAK[S.streak];
   if (verdict === 'wrong') { ocino('mock', ocPick(q.custom ? OC_BAD_R : OC_BAD)); snark = ''; }
   else if (verdict === 'timeout') { ocino('yawn', ocPick(OC_TIME)); snark = ''; }
@@ -2057,12 +2206,14 @@ function finish() {
   else if (pct >= 50) msg = 'Trojka na obzore 🤞';
   else if (pct >= 30) msg = 'Hm. Lepšie ako nič. Tesne.';
   else msg = 'Toto nebolo nič. Chémia 1 : Ty 0. Odveta?';
+  const grade = pct >= 90 ? 1 : pct >= 75 ? 2 : pct >= 50 ? 3 : pct >= 30 ? 4 : 5;
+  const gradeNote = { 1: 'no toto si odpísala', 2: 'skoro dobre, skoro', 3: 'trojka, ako sme sa dohodli', 4: 'no ja neviem, pozvi rodičov', 5: 'odovzdaj žiacku' }[grade];
   const hist = loadHist();
   hist.unshift({ v: 2, ts: Date.now(), test: S.test, diff: S.diff, score: S.score, correct: S.correct, half: S.half, total: tot, dur });
   saveHist(hist);
   mascot(pct >= 50 ? 'ok' : 'boom');
   $('#resultBox').innerHTML = '<div class="mwrap">' + document.querySelector('#home .mascot').outerHTML + '</div>' + `<div class="stat">${TEST[S.test]} · ${DIFF[S.diff].lbl} – „${DIFF[S.diff].t}“</div>
-    <div class="score">${S.score} b</div>
+    <div class="grade"><div class="gnum"><u>${grade}</u>${grade >= 3 ? '?!' : grade === 2 ? '?' : '!'}</div><div class="gnote">${gradeNote}</div><div class="gpts">${S.score} b</div></div>
     <div class="stat">${S.correct}/${tot} správne${S.half ? ` (+${S.half} s výhradou)` : ''} · ${pct} % · najdlhšia séria ${S.best}</div>
     <div class="stat">⏱ Test trval ${fmtDur(dur)} (z toho premýšľanie nad odpoveďami ${fmtDur(ansDur)})</div>
     <div class="stat">⏳ Prejebaný čas s touto posranou hrou celkovo: ${fmtLong(totalSec())}</div>
