@@ -264,7 +264,7 @@ footer{opacity:.85}
 .sticker{right:-40px;top:-6px}
 
 </style>
-<script>window.CHEMIA_VERSION='25. 11. 2026 21:16'</script>
+<script>window.CHEMIA_VERSION='25. 11. 2026 21:22'</script>
 </head>
 <body>
 <div class="app">
@@ -1542,7 +1542,7 @@ function alkLin(alk) {
   return linFormula(g, att, path, (x, y) => C.order(g, x, y));
 }
 
-function genReaction(diff, extra) {
+function genForward(diff, extra) {
   for (let t = 0; t < 60; t++) {
     const pool = Object.keys(RX).filter(k => (extra || !RX[k].extra) && (diff === 'mix' || RX[k].d === diff || (diff === 'h' && RX[k].d === 'm') || (diff === 'e' && k === 'HX')));
     const rk = pick(pool);
@@ -1601,6 +1601,102 @@ function genReaction(diff, extra) {
     };
   }
   return null;
+}
+
+
+/* ---------- opačné smery: aké činidlo? / z čoho? ---------- */
+const REAG = [
+  { k: 'H2', label: 'H₂ (Ni)', how: 'H2', d: 'e' },
+  { k: 'HX', label: 'HCl', how: 'markov', x: 'Cl', d: 'm' },
+  { k: 'HX', label: 'HBr', how: 'markov', x: 'Br', d: 'm' },
+  { k: 'HX', label: 'HI', how: 'markov', x: 'I', d: 'm' },
+  { k: 'HBrP', label: 'HBr + peroxid (R–O–O–R)', how: 'anti', x: 'Br', d: 'h' },
+  { k: 'H2O', label: 'H₂O (H₂SO₄)', how: 'markov', x: 'OH', d: 'm' },
+  { k: 'X2', label: 'Br₂', how: 'vic', x: 'Br', d: 'm', extra: true },
+  { k: 'X2', label: 'Cl₂', how: 'vic', x: 'Cl', d: 'm', extra: true },
+  { k: 'KMnO4', label: 'KMnO₄ (zried., OH⁻)', how: 'vic', x: 'OH', d: 'h' }
+];
+const REAG_WHY = {
+  H2: 'H₂ len nasýti dvojitú väzbu → alkán.',
+  HX: 'HX ide podľa Markovnikova: H na uhlík s viac vodíkmi, halogén na ten s menej.',
+  HBrP: 'S peroxidom ide Br na uhlík s viac vodíkmi (Kharasch).',
+  H2O: 'Voda (H⁺) pridá OH na uhlík s menej vodíkmi (Markovnikov) → alkohol.',
+  X2: 'Halogén X₂ pridá po jednom atóme na oba uhlíky dvojitej väzby.',
+  KMnO4: 'KMnO₄ pridá OH na oba uhlíky dvojitej väzby → diol.'
+};
+// produkt daného činidla; null ak je Markovnikov nejednoznačný
+function prodOf(alk, r) {
+  const p = addProduct(alk, r.how, r.x); if (!p) return null;
+  if (p.eq && (r.how === 'markov' || r.how === 'anti')) {
+    const q = addProduct(alk, r.how === 'markov' ? 'anti' : 'markov', r.x);
+    if (!q || q.name !== p.name) return null;
+  }
+  return p;
+}
+function okReag(r, diff, extra) { return (extra || !r.extra) && (diff === 'mix' || r.d === diff || (diff === 'h' && r.d === 'm') || (diff === 'e' && r.k === 'HX')); }
+
+function genReagentQ(diff, extra) {
+  for (let t = 0; t < 60; t++) {
+    const alk = makeAlkene(pick(diff === 'e' ? ALKENES.filter(s => s[0] === 'u' && s[1] <= 4) : ALKENES)); if (!alk) continue;
+    const r = pick(REAG.filter(x => okReag(x, diff, extra)));
+    const corr = prodOf(alk, r); if (!corr) continue;
+    const others = shuffle(REAG.filter(x => x !== r && (extra || !x.extra)));
+    const opts = [{ text: r.label, ok: true }], seen = new Set([corr.name]);
+    for (const o of others) {
+      if (opts.length >= 4) break;
+      const p = addProduct(alk, o.how, o.x); if (!p || seen.has(p.name)) continue;
+      seen.add(p.name);
+      opts.push({ text: o.label, why: 'S ' + o.label + ' by vznikol ' + p.name + ' (' + p.lin + '), nie ' + corr.name + '.' });
+    }
+    if (opts.length < 4) continue;
+    const mode = Math.random() < 0.5 ? 'name' : 'lin';
+    return {
+      custom: true, gen: true, diff: r.d === 'e' ? 'easy' : r.d === 'm' ? 'medium' : 'hard',
+      ask: 'Čo treba pridať, aby vznikol tento produkt?',
+      eq: { lhs: alkLin(alk) + ' + ?', cond: '', rhs: mode === 'name' ? corr.name : corr.lin, sub: alk.name + ' ⟶ ' + corr.name },
+      opts: shuffle(opts), answer: r.label,
+      expl: [REAG_WHY[r.k], 'Produkt ' + corr.name + ' (' + corr.lin + ') vznikne s: ' + r.label + '.']
+    };
+  }
+  return null;
+}
+
+function genBackQ(diff, extra) {
+  for (let t = 0; t < 80; t++) {
+    const pool = diff === 'e' ? ALKENES.filter(s => s[0] === 'u' && s[1] <= 4) : ALKENES;
+    const alk = makeAlkene(pick(pool)); if (!alk) continue;
+    const r = pick(REAG.filter(x => okReag(x, diff, extra)));
+    const corr = prodOf(alk, r); if (!corr) continue;
+    const combos = [];
+    // iné činidlo, rovnaký alkén
+    for (const o of REAG) if (o !== r && (extra || !o.extra)) combos.push([alk, o]);
+    // iný alkén, rovnaké činidlo
+    for (const sp of shuffle(pool.slice()).slice(0, 6)) { const a2 = makeAlkene(sp); if (a2 && a2.name !== alk.name) combos.push([a2, r]); }
+    const lbl = (a, o) => alkLin(a) + ' + ' + o.label;
+    const opts = [{ text: lbl(alk, r), ok: true }], seen = new Set([corr.name]), seenT = new Set([lbl(alk, r)]);
+    for (const [a2, o] of shuffle(combos)) {
+      if (opts.length >= 4) break;
+      const p = addProduct(a2, o.how, o.x); if (!p || seen.has(p.name)) continue;
+      const tx = lbl(a2, o); if (seenT.has(tx)) continue;
+      seen.add(p.name); seenT.add(tx);
+      opts.push({ text: tx, why: 'Z tohto by vznikol ' + p.name + ' (' + p.lin + ').' });
+    }
+    if (opts.length < 4) continue;
+    return {
+      custom: true, gen: true, diff: r.d === 'h' || diff === 'h' ? 'hard' : 'medium',
+      ask: 'Z čoho vznikne táto látka?',
+      eq: { lhs: '?', cond: '', rhs: corr.lin, sub: corr.name },
+      opts: shuffle(opts), answer: lbl(alk, r),
+      expl: [REAG_WHY[r.k], corr.name + ' vznikne z ' + alk.name + ' (' + alkLin(alk) + ') + ' + r.label + '.']
+    };
+  }
+  return null;
+}
+
+function genReaction(diff, extra) {
+  const x = Math.random();
+  const q = x < 0.5 ? genForward(diff, extra) : x < 0.75 ? genReagentQ(diff, extra) : genBackQ(diff, extra);
+  return q || genForward(diff, extra);
 }
 
 /* ================= SKLADANIE TESTU ================= */
@@ -1828,7 +1924,7 @@ function renderQ() {
   $('#feedback').innerHTML = '';
   if (q.custom) {
     $('#prompt').innerHTML = `<p class="ask">${esc(q.ask)}</p>` + (q.eq
-      ? `<div class="rx"><span>${esc(q.eq.lhs)}</span><span class="arrow">${q.eq.cond ? `<small>${esc(q.eq.cond)}</small>` : ''}⟶</span><span class="qm">?</span></div><div class="rxsub">${esc(q.eq.sub)}</div>`
+      ? `<div class="rx"><span${q.eq.lhs === '?' ? ' class="qm"' : ''}>${esc(q.eq.lhs)}</span><span class="arrow">${q.eq.cond ? `<small>${esc(q.eq.cond)}</small>` : ''}⟶</span><span class="${q.eq.rhs ? '' : 'qm'}">${esc(q.eq.rhs || '?')}</span></div><div class="rxsub">${esc(q.eq.sub)}</div>`
       : `<div class="qtext">${esc(q.text)}</div>`);
   } else if (q.test === 1) {
     $('#prompt').innerHTML = `<p class="ask">${q.typed ? 'Napíš názov tejto látky:' : 'Ako sa volá táto látka?'}</p><div class="paper">${q.svg}</div>`;
@@ -1976,7 +2072,7 @@ function finish() {
     mh = `<h2 style="margin-top:24px">Prehľad chýb</h2><p class="sub">Toto si ešte raz pozri. Áno, teraz.</p>`;
     for (const { q, yours } of S.mistakes) {
       mh += `<div class="mist">`;
-      if (q.custom) mh += `<div class="q">${q.eq ? esc(q.eq.lhs + ' ⟶ ?') + (q.eq.cond ? ' (' + esc(q.eq.cond) + ')' : '') : esc(q.text)}</div><div class="yours">Ty: ${esc(yours)}</div><div class="good">Správne: ${esc(q.answer)}</div>`;
+      if (q.custom) mh += `<div class="q">${q.eq ? esc(q.eq.lhs + ' ⟶ ' + (q.eq.rhs || '?')) + (q.eq.cond ? ' (' + esc(q.eq.cond) + ')' : '') : esc(q.text)}</div><div class="yours">Ty: ${esc(yours)}</div><div class="good">Správne: ${esc(q.answer)}</div>`;
       else if (q.test === 1) mh += `<div class="paper">${q.svg}</div><div class="yours">Ty: ${esc(yours)}</div><div class="good">Správne: ${esc(q.m.name)}</div>`;
       else mh += `<div class="q">Hľadaný vzorec: <b>${esc(q.m.name)}</b></div><div class="paper">${q.opts.find(o => o.ok).svg}</div><div class="yours">Ty: ${esc(yours)}</div>`;
       mh += `</div>`;
