@@ -264,7 +264,7 @@ footer{opacity:.85}
 .sticker{right:-40px;top:-6px}
 
 </style>
-<script>window.CHEMIA_VERSION='25. 11. 2026 20:57'</script>
+<script>window.CHEMIA_VERSION='25. 11. 2026 21:16'</script>
 </head>
 <body>
 <div class="app">
@@ -1711,6 +1711,20 @@ function ocinoHide() { clearTimeout(ocT); const el = document.getElementById('oc
 const KEY = 'chemia_history_v1';
 function loadHist() { try { const h = JSON.parse(localStorage.getItem(KEY)) || []; h.forEach(r => { if (!r.v) { r.score = Math.round(r.score / 10); r.v = 2; } }); return h; } catch (e) { return []; } }
 function saveHist(h) { try { localStorage.setItem(KEY, JSON.stringify(h.slice(0, 200))); } catch (e) {} }
+// jednorazovo: dopočítať starý čas z histórie (testy pred zavedením počítadla)
+(function migrateTotal() {
+  try {
+    if (localStorage.getItem('chemia_total_mig1')) return;
+    const CUT = Date.UTC(2026, 10, 25, 19, 33); // 25. 11. 2026 20:33 – odvtedy sa čas počíta
+    const h = loadHist();
+    const known = h.filter(r => r.dur > 0).map(r => r.dur);
+    const avg = known.length ? known.reduce((a, b) => a + b, 0) / known.length : 300;
+    let add = 0;
+    for (const r of h) if (r.ts < CUT) add += r.dur > 0 ? r.dur : avg;
+    localStorage.setItem(TKEY, String(totalSec() + Math.round(add)));
+    localStorage.setItem('chemia_total_mig1', '1');
+  } catch (e) {}
+})();
 
 /* ---------- maskot ---------- */
 function mascot(cls) {
