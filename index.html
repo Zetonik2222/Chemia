@@ -198,6 +198,23 @@ footer .ver{display:block;margin-top:4px;font-size:.72rem}
 .ocino.show .ocbub{transform:scale(1);opacity:1}
 .ocbub::after{content:"";position:absolute;right:-12px;bottom:14px;border:9px solid transparent;border-left-color:var(--neon)}
 
+.pickt{margin:4px 0 8px;font-weight:800;color:var(--muted);text-align:center}
+.topics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.topic{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;transition:all .15s}
+.topic .te{font-size:1.6rem}.topic .tl{font-weight:800;font-size:1.08rem}.topic .tt{font-size:.78rem;color:var(--muted);font-style:italic}
+.topic.on{border-color:var(--neon);box-shadow:0 0 18px rgba(255,79,163,.3);background:var(--panel2)}
+.wasted{text-align:center;color:var(--muted);font-size:.92rem;margin:4px 0 12px}
+.wasted b{color:var(--neon)}
+.wasted.big2{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:10px;font-size:1rem}
+.qtext{font-size:1.25rem;font-weight:700;line-height:1.4;padding:6px 2px}
+.rx{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;font-size:1.3rem;font-weight:800;padding:12px 4px 4px;color:var(--text)}
+.rx .arrow{display:inline-flex;flex-direction:column;align-items:center;line-height:1;color:var(--neon);font-size:1.5rem}
+.rx .arrow small{font-size:.72rem;color:var(--c2);font-weight:700;margin-bottom:2px}
+.rx .qm{color:var(--neon)}
+.rxsub{text-align:center;color:var(--muted);font-size:.9rem;padding-bottom:4px}
+.ocino{visibility:hidden;transition:transform .45s cubic-bezier(.2,1.4,.4,1),visibility 0s linear .45s}
+.ocino.show{visibility:visible;transition:transform .45s cubic-bezier(.2,1.4,.4,1),visibility 0s}
+
 /* ===== ružovo-fialová téma: „nenávidím chémiu“ ===== */
 :root{
   --bg:#13071a; --panel:#211029; --panel2:#2c1536; --line:#43204f;
@@ -247,7 +264,7 @@ footer{opacity:.85}
 .sticker{right:-40px;top:-6px}
 
 </style>
-<script>window.CHEMIA_VERSION='18. 11. 2026 16:49'</script>
+<script>window.CHEMIA_VERSION='25. 11. 2026 20:57'</script>
 </head>
 <body>
 <div class="app">
@@ -282,9 +299,10 @@ footer{opacity:.85}
     <div class="logo-wrap"><h1 class="logo">chémia</h1><span class="sticker">FUJ!</span></div>
     <p class="tag">Prežiť alkény. Nič viac nežiadame.</p><span class="hate" id="hate"></span>
   </div>
-  <button class="big" data-test="1"><span class="badge">🧪</span><span class="bt">Vzorec → názov</span><span class="bs">Pozri vzorec, vymysli meno. Raz klikáš, raz píšeš.</span></button>
-  <button class="big" data-test="2"><span class="badge">🔬</span><span class="bt">Názov → vzorec</span><span class="bs">Máš meno, nájdi ten správny vzorec zo štyroch.</span></button>
-  <button class="big" data-test="3"><span class="badge">🤬</span><span class="bt">Dopipiny, oboje!</span><span class="bs">Raz vzorec, raz názov. Chémia útočí zo všetkých strán a ty sa bráň, ako vieš.</span></button>
+  <p class="pickt">Čím sa dnes budeš trápiť?</p>
+  <div class="topics" id="topics"></div>
+  <div id="tests"></div>
+  <p class="wasted" id="wasted"></p>
   <div class="row">
     <button class="ghost" id="btnHist">📜 Záznam utrpenia</button>
     <button class="ghost" id="btnCheat">📄 Ťahák</button>
@@ -390,6 +408,41 @@ footer{opacity:.85}
     <ul><li>Existuje, keď je dvojitá väzba vnútri reťazca (od C4, napr. but-2-én).</li>
     <li><b>cis</b> – reťazec pokračuje na <b>tú istú stranu</b> dvojitej väzby.</li>
     <li><b>trans</b> – na <b>opačné strany</b> (krížom).</li></ul></section>
+  <h2 style="margin-top:22px">💥 Reakcie alkénov</h2>
+  <section><h3>Výroba alkénov</h3>
+    <ol><li><b>Katalytická dehydrogenácia alkánov:</b> CH₃–CH₃ → (kat., 800 °C) → CH₂=CH₂ + H₂</li>
+    <li><b>Hydrogenácia alkínov:</b> CH₃–C≡C–CH₃ + H₂ → (Pd, CaCO₃) → CH₃–CH=CH–CH₃</li>
+    <li><b>Dehydratácia alkoholov:</b> CH₃–CH₂–OH → (H₂SO₄, 200 °C) → CH₂=CH₂ + H₂O</li></ol>
+    <p>Výskyt: v zemnom plyne.</p></section>
+  <section><h3>Fyzikálne vlastnosti</h3>
+    <ul><li>Teplota topenia a varu rastie s počtom C – alkény <b>nižšie</b> ako alkány.</li>
+    <li>Hustota rastie s počtom C – alkény <b>vyššie</b> ako alkány.</li>
+    <li>Rozpustné v nepolárnych organických rozpúšťadlách, <b>vo vode nie</b>.</li>
+    <li>C₂–C₄ plynné, C₅–C₁₇ kvapalné, vyššie tuhé.</li></ul></section>
+  <section><h3>Reaktivita</h3>
+    <ul><li>Alkény &gt; alkány – reakčné centrum je <b>dvojitá väzba</b>.</li>
+    <li>Nukleofilný charakter, prevažne heterolytické štiepenie (štiepi sa slabšia π väzba).</li>
+    <li>Typické: elektrofilné a radikálové adície.</li></ul></section>
+  <section><h3>1. Elektrofilná adícia (A_E)</h3>
+    <ul><li>Rýchlosť: CH₂=CH₂ &lt; CH₂=CH–R &lt; R–CH=CH–R (+I efekt) a HF &lt; HCl &lt; HBr &lt; HI.</li>
+    <li>Dvojstupňová: elektrofil na π elektróny → π komplex → <b>karbkatión (⊕)</b> (pomaly), potom nukleofil (rýchlo).</li></ul>
+    <p class="note"><b>Markovnikov:</b> H sa viaže na uhlík dvojitej väzby s VIAC vodíkmi. CH₃–CH=CH₂ + HBr → CH₃–CHBr–CH₃</p></section>
+  <section><h3>2. Radikálová adícia (A_R)</h3>
+    <ul><li>Homolyticky, s <b>organickým peroxidom</b> (R–O–O–R) a teplom.</li>
+    <li>Kroky: iniciácia (RO–OR → 2RO•) → propagácia → terminácia (radikál + radikál).</li></ul>
+    <p class="note"><b>Kharasch (anti-Markovnikov):</b> ťažšia častica (Br) ide na uhlík s VIAC vodíkmi. CH₃–CH=CH₂ + HBr (peroxid) → CH₃–CH₂–CH₂–Br</p></section>
+  <section><h3>Hydrogenácia a stužovanie</h3>
+    <ul><li>Alkén + H₂ → alkán (Pt/Pd/Ni): CH₂=CH₂ + H₂ → CH₃–CH₃</li>
+    <li>Stužovanie tukov (Hera): H₂, Ni, tlak – z kvapalných olejov tuhé tuky, nenasýtené → nasýtené kyseliny.</li></ul></section>
+  <section><h3>3. Polymerizácia</h3>
+    <ul><li>Monoméry s násobnou väzbou → makromolekuly (n &gt; 1000), zaniká násobná väzba, bez vedľajšieho produktu.</li>
+    <li>etén → PE, propylén → PP, styrén → PS, vinylchlorid → PVC</li></ul></section>
+  <section><h3>4. Hydratácia (výroba alkoholov)</h3>
+    <ul><li>CH₂=CH₂ + H₂O → (H₂SO₄) → CH₃–CH₂–OH, podľa Markovnikova.</li>
+    <li>Mechanizmus: + H⁺ → karbkatión → + H₂O → − H⁺ → alkohol.</li></ul></section>
+  <section><h3>5. Dôkaz násobnej väzby</h3>
+    <ul><li>Zriedený KMnO₄ (zásadité prostredie): <b>fialová → hnedá</b> (MnO₂).</li>
+    <li>CH₃–CH=CH₂ → CH₃–CH(OH)–CH₂–OH + MnO₂ + KOH</li></ul></section>
 </section>
 
 </div>
@@ -1233,12 +1286,366 @@ root.ChemRender = { prepare, render };
 if (typeof module !== 'undefined') module.exports = root.ChemRender;
 })(typeof window !== 'undefined' ? window : globalThis);
 
+/* ===== chémia – reakcie alkénov ===== */
+(function (root) {
+'use strict';
+const C = root.Chem;
+const STEM = { 1: 'met', 2: 'et', 3: 'prop', 4: 'but', 5: 'pent', 6: 'hex', 7: 'hept', 8: 'okt' };
+const MULT = ['', '', 'di', 'tri', 'tetra'];
+const HAL = { Br: 'bróm', Cl: 'chlór', I: 'jód' };
+const SUBD = '₀₁₂₃₄₅₆₇₈₉';
+const sub = n => String(n).split('').map(d => SUBD[+d]).join('');
+const num = (a, b) => a - b;
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = C.shuffle;
+
+/* ================= BANKA OTÁZOK =================
+   d: e/m/h (obťažnosť), s: z = zo zošita, n = navyše
+   q: otázka, a: správna odpoveď, w: zlé odpovede (text alebo [text, prečo]), x: vysvetlenie */
+const BANK = [
+// --- výskyt a výroba ---
+{d:'e',s:'z',q:'Kde sa alkény vyskytujú (podľa zošita)?',a:'v zemnom plyne',w:['v kuchynskej soli','v morskej vode','v ľudskej krvi'],x:'V zošite: výskyt – v zemnom plyne.'},
+{d:'e',s:'z',q:'Ktorá reakcia vyrába alkén z alkánu?',a:'katalytická dehydrogenácia',w:[['hydrogenácia','Hydrogenácia vodík pridáva – z alkénu by spravila alkán, nie naopak.'],'hydratácia','polymerizácia'],x:'Katalytická dehydrogenácia = odobratie vodíka z alkánu: CH₃–CH₃ → CH₂=CH₂ + H₂ (katalyzátor, 800 °C).'},
+{d:'m',s:'z',q:'CH₃–CH₃ ⟶ (kat., 800 °C) ⟶ ?',a:'CH₂=CH₂ + H₂',w:[['CH₂=CH₂ + H₂O','Voda vzniká pri dehydratácii alkoholu, nie pri dehydrogenácii alkánu.'],'CH≡CH + H₂O','CH₃–CH₂–OH'],x:'Dehydrogenácia: z etánu sa odštiepi H₂ a vznikne etén.'},
+{d:'e',s:'z',q:'Z ktorých látok vzniká alkén hydrogenáciou (podľa zošita)?',a:'z alkínov',w:[['z alkánov','Alkán už vodík pridať nevie – je nasýtený.'],'z alkoholov','z polymérov'],x:'Hydrogenácia alkínov: trojitá väzba + H₂ → dvojitá väzba (katalyzátor Pd/CaCO₃).'},
+{d:'m',s:'z',q:'CH₃–C≡C–CH₃ + H₂ ⟶ (Pd, CaCO₃) ⟶ ?',a:'CH₃–CH=CH–CH₃',w:[['CH₃–CH₂–CH₂–CH₃','Toto by bola úplná hydrogenácia až na alkán. Pd/CaCO₃ zastaví reakciu na alkéne.'],'CH₂=CH–CH=CH₂','CH₃–CH₂–C≡CH'],x:'Jedna molekula H₂ zmení trojitú väzbu na dvojitú: but-2-ín → but-2-én.'},
+{d:'e',s:'z',q:'Dehydratácia etanolu (H₂SO₄, 200 °C) dá:',a:'CH₂=CH₂ + H₂O',w:['CH₃–CH₃ + H₂O',['CH₂=CH₂ + H₂','Dehydratácia = odobratie vody, nie vodíka.'],'CH₃–CH₂–CH₃'],x:'CH₃–CH₂–OH → CH₂=CH₂ + H₂O (de-hydratácia = odobratie vody).'},
+{d:'e',s:'z',q:'Čo sa odštiepi z alkoholu pri dehydratácii?',a:'voda',w:['vodík','oxid uhličitý','kyselina sírová'],x:'Hydor = voda. Dehydratácia = odstránenie vody z molekuly alkoholu, vznikne alkén.'},
+{d:'m',s:'z',q:'Ktorá reakcia NEpatrí medzi výrobu alkénov (podľa zošita)?',a:'polymerizácia',w:['katalytická dehydrogenácia alkánov','hydrogenácia alkínov','dehydratácia alkoholov'],x:'Výroba alkénov: 1) dehydrogenácia alkánov, 2) hydrogenácia alkínov, 3) dehydratácia alkoholov. Polymerizácia alkény spotrebúva.'},
+// --- fyzikálne vlastnosti ---
+{d:'e',s:'z',q:'Teplota topenia a varu alkénov s rastúcim počtom atómov uhlíka:',a:'rastie',w:['klesá','nemení sa','najprv rastie, potom klesá'],x:'Väčšia molekula = silnejšie medzimolekulové sily = vyššia teplota topenia aj varu.'},
+{d:'m',s:'z',q:'Teploty topenia a varu alkénov v porovnaní s alkánmi sú:',a:'nižšie',w:['vyššie','rovnaké','raz vyššie, raz nižšie, náhodne'],x:'V zošite: teplota topenia a varu – alkény nižšie ako alkány.'},
+{d:'e',s:'z',q:'Hustota alkénov s rastúcim počtom atómov uhlíka:',a:'rastie',w:['klesá','nemení sa','je vždy rovnaká ako hustota vody'],x:'Hustota rastie s počtom atómov uhlíka.'},
+{d:'m',s:'z',q:'Hustota alkénov v porovnaní s alkánmi je:',a:'vyššia',w:['nižšia','rovnaká','nulová'],x:'V zošite: hustota – alkény vyššie ako alkány. (Pozor, pri teplote varu je to naopak!)'},
+{d:'e',s:'z',q:'Kde sa alkény rozpúšťajú?',a:'v nepolárnych organických rozpúšťadlách, vo vode nie',w:['dobre vo vode','vo vode aj v organických rozpúšťadlách rovnako','nikde sa nerozpúšťajú'],x:'Alkény sú nepolárne – rozpúšťajú sa v nepolárnych organických rozpúšťadlách, vo vode nie.'},
+{d:'e',s:'z',q:'Alkény s C₂ až C₄ sú pri bežných podmienkach:',a:'plynné',w:['kvapalné','tuhé','plazma'],x:'C₂–C₄ plynné, C₅–C₁₇ kvapalné, vyššie tuhé.'},
+{d:'e',s:'z',q:'Alkény s C₅ až C₁₇ sú pri bežných podmienkach:',a:'kvapalné',w:['plynné','tuhé','raz plynné, raz tuhé'],x:'C₂–C₄ plynné, C₅–C₁₇ kvapalné, vyššie tuhé.'},
+{d:'e',s:'z',q:'Alkény s viac ako 17 atómami uhlíka sú:',a:'tuhé',w:['plynné','kvapalné','nestabilné, hneď sa rozpadnú'],x:'C₂–C₄ plynné, C₅–C₁₇ kvapalné, vyššie tuhé.'},
+{d:'m',s:'z',q:'Propén (C₃H₆) je pri izbovej teplote:',a:'plyn',w:['kvapalina','tuhá látka','gél'],x:'Propén má 3 uhlíky → patrí do skupiny C₂–C₄ → plynný.'},
+{d:'m',s:'z',q:'Hex-1-én (C₆H₁₂) je pri izbovej teplote:',a:'kvapalina',w:['plyn','tuhá látka','prášok'],x:'Hexén má 6 uhlíkov → patrí do skupiny C₅–C₁₇ → kvapalný.'},
+// --- chemické vlastnosti ---
+{d:'e',s:'z',q:'Čo je reaktívnejšie?',a:'alkény',w:['alkány','oboje rovnako','závisí len od farby fľaše'],x:'Alkény > alkány – dvojitá väzba je reakčné centrum.'},
+{d:'e',s:'z',q:'Reakčným centrom alkénu je:',a:'dvojitá (násobná) väzba',w:['väzba C–H na konci reťazca','metylová skupina','najťažší atóm uhlíka'],x:'Reaktivitu alkénov určuje násobná väzba – tam sa reakcie dejú.'},
+{d:'m',s:'z',q:'Aký charakter majú alkény (podľa zošita)?',a:'nukleofilný',w:[['elektrofilný','Elektrofil je činidlo, ktoré na alkén útočí. Alkén sám má π elektróny na rozdávanie – je nukleofilný.'],'žiadny, nereagujú','kyslý'],x:'Alkény majú nukleofilný charakter – π elektróny dvojitej väzby lákajú elektrofily.'},
+{d:'m',s:'z',q:'Typické reakcie alkénov sú:',a:'elektrofilné a radikálové adície',w:[['substitúcie','Substitúcie sú typické pre alkány. Alkény adujú – pridávajú na dvojitú väzbu.'],'eliminácie','neutralizácie'],x:'Typické reakcie alkénov: elektrofilné a radikálové reakcie (adície).'},
+{d:'h',s:'z',q:'Ako sa pri reakciách alkénov prevažne štiepi väzba?',a:'heterolyticky – štiepi sa slabšia π väzba',w:['homolyticky – štiepi sa σ väzba','neštiepi sa nič','štiepi sa väzba C–H'],x:'Prevažne heterolytické štiepenie väzby – „slabší vyhráva“: štiepi sa slabšia π väzba dvojitej väzby.'},
+// --- elektrofilná adícia ---
+{d:'e',s:'z',q:'Elektrofilná adícia sa označuje:',a:'A_E',w:[['A_R','A_R je radikálová adícia.'],'S_R','E'],x:'A = adícia, E = elektrofilná → A_E.'},
+{d:'m',s:'z',q:'Čo sa deje pri elektrofilnej adícii?',a:'heterolyticky zaniká násobná väzba a naviaže sa elektrofil',w:['homolyticky zaniká väzba za prítomnosti peroxidu','vzniká nová dvojitá väzba','odštiepi sa voda'],x:'A_E: heterolytický zánik násobnej väzby a naviazanie elektrofilu.'},
+{d:'m',s:'z',q:'Rýchlosť A_E stúpa s +I efektom alkylových skupín. Ktorý alkén reaguje najrýchlejšie?',a:'R–CH=CH–R',w:['CH₂=CH₂','CH₂=CH–R','všetky rovnako'],x:'CH₂=CH₂ < CH₂=CH–R < R–CH=CH–R. Viac alkylov = silnejší +I efekt = rýchlejšia reakcia.'},
+{d:'m',s:'z',q:'Ktorý alkén reaguje pri A_E najpomalšie?',a:'CH₂=CH₂',w:['CH₂=CH–R','R–CH=CH–R','všetky rovnako'],x:'Etén nemá žiadne alkylové skupiny, takže nemá +I efekt → najpomalší.'},
+{d:'e',s:'z',q:'Ktorá kyselina reaguje s alkénom najľahšie?',a:'HI',w:['HF','HCl','HBr'],x:'Čím silnejšie činidlo, tým ľahší priebeh: HF < HCl < HBr < HI.'},
+{d:'m',s:'z',q:'Správne poradie podľa rýchlosti A_E (od najpomalšej):',a:'HF < HCl < HBr < HI',w:['HI < HBr < HCl < HF','HCl < HF < HI < HBr','HBr < HI < HF < HCl'],x:'HF < HCl < HBr < HI – rastie sila činidla, rastie rýchlosť.'},
+{d:'e',s:'z',q:'Mechanizmus elektrofilnej adície je:',a:'dvojstupňový',w:['jednostupňový',['trojstupňový (iniciácia, propagácia, terminácia)','To sú kroky radikálovej adície.'],'žiadny, prebehne naraz'],x:'A_E: 1) naviazanie elektrofilu (π komplex → karbkatión), 2) naviazanie nukleofilu na karbkatión.'},
+{d:'h',s:'z',q:'Čo vznikne v 1. kroku A_E po naviazaní elektrofilu na π elektróny?',a:'π komplex a z neho karbkatión',w:['voľný radikál','karbanión','polymér'],x:'Elektrofil sa naviaže na π elektróny → π komplex → zanikne násobná väzba, na druhom uhlíku vznikne karbkatión.'},
+{d:'m',s:'z',q:'Karbkatión má na atóme uhlíka:',a:'kladný náboj',w:['záporný náboj','nepárový elektrón','žiadny náboj'],x:'Karb-katión = katión na uhlíku = kladný náboj (⊕).'},
+{d:'m',s:'z',q:'Čo sa naviaže na karbkatión v 2. kroku A_E?',a:'nukleofil',w:['elektrofil','radikál','katalyzátor'],x:'Kladný karbkatión priťahuje nukleofil (napr. Br⁻) – to je 2. krok.'},
+{d:'h',s:'z',q:'Ktorý krok A_E je pomalý?',a:'vznik karbkatiónu',w:['naviazanie nukleofilu na karbkatión','oba sú rovnako rýchle','žiadny, všetko je okamžité'],x:'Vznik karbkatiónu je pomalý, naviazanie nukleofilu na karbkatión je rýchle.'},
+// --- Markovnikov ---
+{d:'e',s:'z',q:'Markovnikovo pravidlo: H⁺ sa viaže na uhlík dvojitej väzby, ktorý má…',a:'viac atómov vodíka',w:['menej atómov vodíka','viac atómov uhlíka','na ktorýkoľvek, je to jedno'],x:'Pri A_E nesymetrických alkénov sa H viaže na uhlík dvojitej väzby s väčším počtom vodíkov. („Kto má, tomu sa pridá.“)'},
+{d:'m',s:'z',q:'CH₃–CH=CH₂ + HBr ⟶ hlavný produkt?',a:'CH₃–CHBr–CH₃',w:[['CH₃–CH₂–CH₂–Br','Toto vznikne s peroxidom (Kharasch). Bez peroxidu platí Markovnikov.'],'CH₃–CHBr–CH₂–Br','CH₃–CH₂–CH₃'],x:'H ide na CH₂= (viac vodíkov), Br na =CH– → 2-brómpropán.'},
+{d:'h',s:'z',q:'Prečo pri A_E propénu s HY vzniká hlavne CH₃–CHY–CH₃?',a:'sekundárny karbkatión je stabilnejší',w:['primárny karbkatión je stabilnejší','Y je ťažšie ako H','lebo tak je to v tabuľkách'],x:'H⁺ na CH₂ dá karbkatión CH₃–CH⁺–CH₃ (stabilnejší, vzniká rýchlo) → hlavný produkt. CH₃–CH₂–CH₂⁺ je nestabilnejší → vedľajší produkt.'},
+{d:'m',s:'z',q:'CH₃–CH₂–CH₂–Y pri A_E propénu (bez peroxidu) je:',a:'vedľajší produkt',w:['hlavný produkt','nevzniká vôbec','katalyzátor'],x:'Vzniká cez nestabilnejší primárny karbkatión → vedľajší produkt.'},
+// --- radikálová adícia, Kharasch ---
+{d:'e',s:'z',q:'Radikálová adícia prebieha za prítomnosti:',a:'organických peroxidov a zvýšenej teploty',w:['kyseliny sírovej','KMnO₄','vody a soli'],x:'A_R: homolytický zánik väzby za prítomnosti organických peroxidov (R–O–O–R) a zvýšenej teploty.'},
+{d:'m',s:'z',q:'Pri radikálovej adícii zaniká väzba:',a:'homolyticky',w:[['heterolyticky','Heterolyticky = elektrofilná adícia.'],'vôbec nezaniká','iónovo'],x:'Homolyticky = každý atóm si nechá jeden elektrón → vznikajú radikály.'},
+{d:'e',s:'z',q:'Kharaschovo pravidlo sa nazýva aj:',a:'antimarkovnikovo',w:['Markovnikovo','pravidlo oktetu','Hundovo pravidlo'],x:'Kharasch = anti-Markovnikov, pri radikálovej adícii HBr s peroxidom.'},
+{d:'m',s:'z',q:'CH₃–CH=CH₂ + HBr ⟶ (R–O–O–R) ⟶ ?',a:'CH₃–CH₂–CH₂–Br',w:[['CH₃–CHBr–CH₃','Toto je produkt bez peroxidu (Markovnikov). Peroxid = Kharasch = naopak.'],'CH₃–CHBr–CH₂–Br','CH₃–CH₂–CH₃'],x:'S peroxidom sa ťažšia častica (Br) viaže na uhlík s viac vodíkmi → 1-brómpropán.'},
+{d:'m',s:'z',q:'Podľa Kharascha sa na uhlík s vyšším počtom vodíkov viaže:',a:'ťažšia častica (napr. Br)',w:['vodík','kyslík z peroxidu','nič'],x:'Pri A_R sa ťažšia častica viaže na uhlík s vyšším počtom atómov vodíka.'},
+{d:'m',s:'z',q:'Kroky radikálového mechanizmu v správnom poradí:',a:'iniciácia → propagácia → terminácia',w:['propagácia → iniciácia → terminácia','terminácia → propagácia → iniciácia','iniciácia → terminácia → propagácia'],x:'Začiatok (iniciácia) → reťazová reakcia (propagácia) → koniec (terminácia).'},
+{d:'h',s:'z',q:'Čo sa deje pri iniciácii?',a:'RO–OR → 2 RO• (peroxid sa rozpadne na radikály)',w:['Br• + •Br → Br₂','R–O• + HBr → R–OH + Br•','CH₃–CH=CH₂ + Br• → CH₃–ĊH–CH₂–Br'],x:'Iniciácia: teplom sa peroxid rozpadne na dva radikály RO•.'},
+{d:'h',s:'z',q:'Ktorá rovnica patrí k terminácii?',a:'Br• + •Br → Br₂',w:[['RO–OR → 2 RO•','To je iniciácia – radikály vznikajú.'],['R–O• + HBr → R–OH + Br•','To je propagácia – radikál vzniká ďalej.'],['CH₃–CH=CH₂ + Br• → CH₃–ĊH–CH₂–Br','To je propagácia.']],x:'Terminácia: dva radikály sa spoja a reťaz končí (RO• + RO•, Br• + Br•, RO• + Br•).'},
+{d:'h',s:'z',q:'Ktorá rovnica patrí k propagácii?',a:'CH₃–CH=CH₂ + Br• → CH₃–ĊH–CH₂–Br',w:['RO–OR → 2 RO•','Br• + •Br → Br₂','R–O• + R–O• → R–O–O–R'],x:'Propagácia: radikál reaguje a vzniká nový radikál – reťaz pokračuje.'},
+// --- hydrogenácia, stužovanie ---
+{d:'e',s:'z',q:'Hydrogenáciou alkénov vznikajú:',a:'alkány',w:['alkíny','alkoholy','polyméry'],x:'H₂ sa naviaže na dvojitú väzbu → nasýtený uhľovodík = alkán.'},
+{d:'e',s:'z',q:'CH₂=CH₂ + H₂ ⟶ (Pt/Pd/Ni) ⟶ ?',a:'CH₃–CH₃ (etán)',w:['CH≡CH (etín)','CH₃–CH₂–OH (etanol)','CH₂=CH₂ (nič sa nestane)'],x:'Etén + vodík → etán.'},
+{d:'m',s:'z',q:'CH₃–CH=CH₂ + H₂ ⟶ (Ni) ⟶ ?',a:'CH₃–CH₂–CH₃ (propán)',w:['CH₃–C≡CH (propín)','CH₃–CH(OH)–CH₃','CH₂=CH–CH=CH₂'],x:'Propén + vodík → propán.'},
+{d:'e',s:'z',q:'Katalyzátor hydrogenácie alkénov (podľa zošita):',a:'Pt, Pd alebo Ni',w:['H₂SO₄','KMnO₄','organický peroxid'],x:'Hydrogenácia: pri vysokej teplote za prítomnosti katalyzátora Pt/Pd/Ni.'},
+{d:'m',s:'z',q:'Stužovanie tukov je:',a:'katalytická hydrogenácia tukov (H₂, Ni, tlak)',w:['oxidácia tukov KMnO₄','polymerizácia tukov','dehydratácia tukov'],x:'Stužovanie = katalytická hydrogenácia tukov pod tlakom, vodíkom, s katalyzátorom Ni.'},
+{d:'e',s:'z',q:'Čo vznikne stužovaním z kvapalných olejov?',a:'tuhé tuky (napr. margaríny)',w:['plyny','plasty','alkoholy'],x:'Z kvapalných olejov vznikajú tuhé tuky – margaríny (napr. Hera).'},
+{d:'m',s:'z',q:'Pri stužovaní sa nenasýtené mastné kyseliny menia na:',a:'nasýtené',w:['ešte viac nenasýtené','alkény','aromatické'],x:'Vodík sa naviaže na dvojité väzby → z nenasýtených sú nasýtené mastné kyseliny.'},
+{d:'m',s:'z',q:'Stužené tuky sú (podľa zošita):',a:'odolnejšie proti žltnutiu a menej zapáchajú',w:['menej trvanlivé','kvapalné','jedovaté'],x:'Stužené tuky sú odolnejšie proti žltnutiu a menej zapáchajú.'},
+// --- polymerizácia ---
+{d:'e',s:'z',q:'Polymerizácia je:',a:'spájanie monomérov s násobnou väzbou do makromolekúl',w:['rozklad polyméru na monoméry','odštiepenie vody z alkoholu','adícia vodíka na alkén'],x:'Polymerizácia: spájanie zlúčenín s násobnou väzbou (monomérov) do veľkých makromolekúl (polymérov).'},
+{d:'m',s:'z',q:'Čo platí pri polymerizácii?',a:'zaniká násobná väzba a nevzniká vedľajší produkt',w:['vzniká voda ako vedľajší produkt','vzniká nová trojitá väzba','monoméry sa rozpadnú na atómy'],x:'Pri polymerizácii zaniká násobná väzba, nevzniká vedľajší produkt.'},
+{d:'e',s:'z',q:'Z eténu (etylénu) vzniká:',a:'polyetylén (PE)',w:['polypropylén (PP)','polystyrén (PS)','polyvinylchlorid (PVC)'],x:'n CH₂=CH₂ → [–CH₂–CH₂–]ₙ polyetylén.'},
+{d:'e',s:'z',q:'Z propylénu vzniká:',a:'polypropylén (PP)',w:['polyetylén (PE)','polystyrén (PS)','polyvinylchlorid (PVC)'],x:'n CH₂=CH–CH₃ → polypropylén (PP).'},
+{d:'e',s:'z',q:'Zo styrénu vzniká:',a:'polystyrén (PS)',w:['polyetylén (PE)','polypropylén (PP)','polyvinylchlorid (PVC)'],x:'Styrén (CH₂=CH s benzénovým jadrom) → polystyrén (PS).'},
+{d:'e',s:'z',q:'Z vinylchloridu (CH₂=CH–Cl) vzniká:',a:'polyvinylchlorid (PVC)',w:['polyetylén (PE)','polypropylén (PP)','polystyrén (PS)'],x:'n CH₂=CHCl → [–CH₂–CHCl–]ₙ = PVC.'},
+{d:'m',s:'z',q:'Monomér polypropylénu je:',a:'CH₂=CH–CH₃',w:['CH₂=CH₂','CH₂=CH–Cl','CH₃–CH₂–CH₃'],x:'Polypropylén vzniká z propylénu (propénu) CH₂=CH–CH₃.'},
+{d:'m',s:'z',q:'Monomér PVC je:',a:'CH₂=CH–Cl',w:['CH₂=CH₂','CH₂=CH–CH₃','CH₃–CH₂–Cl'],x:'PVC = polyvinylchlorid, monomér vinylchlorid CH₂=CHCl.'},
+{d:'m',s:'z',q:'Polymerizácia prebieha spôsobom:',a:'radikálovým alebo iónovým',w:['len pomocou KMnO₄','len hydratáciou','iba pri izbovej teplote bez ničoho'],x:'Polymerizácia prebieha radikálovým alebo iónovým spôsobom.'},
+{d:'m',s:'z',q:'Koľko je n v polyméri (podľa zošita)?',a:'viac ako 1000',w:['2','presne 10','menej ako 100'],x:'V zošite: n > 1000.'},
+// --- hydratácia ---
+{d:'e',s:'z',q:'CH₂=CH₂ + H₂O ⟶ (H₂SO₄) ⟶ ?',a:'CH₃–CH₂–OH (etanol)',w:['CH₃–CH₃ (etán)','CH₂=CH–OH','HO–CH₂–CH₂–OH'],x:'Adícia vody na etén za katalýzy H⁺ → etanol.'},
+{d:'m',s:'z',q:'Čo robí H₂SO₄ pri hydratácii eténu?',a:'poskytuje H⁺ (katalyzátor)',w:['dodáva síru do produktu','je to produkt reakcie','odoberá vodík'],x:'Kyselina poskytne H⁺ – alkén tak získava elektrofilný charakter a reaguje s vodou.'},
+{d:'m',s:'z',q:'Adícia vody na alkén (hydratácia) prebieha podľa:',a:'Markovnikovho pravidla',w:['Kharaschovho pravidla','Hundovho pravidla','žiadneho pravidla'],x:'V zošite: mechanizmus (podľa Markovnikova).'},
+{d:'h',s:'z',q:'1. krok mechanizmu hydratácie eténu:',a:'CH₂=CH₂ + H⁺ → CH₃–CH₂⁺',w:['CH₂=CH₂ + OH⁻ → HO–CH₂–CH₂⁻','CH₂=CH₂ + H₂O → CH₃–CH₂–OH naraz','CH₃–CH₂–OH → CH₂=CH₂ + H₂O'],x:'Najprv sa naviaže H⁺ → karbkatión, potom voda, nakoniec sa odštiepi H⁺.'},
+{d:'h',s:'z',q:'Posledný krok hydratácie eténu:',a:'odštiepi sa H⁺ a vznikne etanol',w:['naviaže sa ďalší H⁺','vznikne etén','odštiepi sa voda'],x:'CH₃–CH₂–OH₂⁺ → −H⁺ → CH₃–CH₂–OH. Kyselina sa vráti, je to katalyzátor.'},
+// --- dôkaz ---
+{d:'e',s:'z',q:'Dôkaz násobnej väzby (podľa zošita) je reakcia s:',a:'KMnO₄',w:['NaCl','vodou','H₂'],x:'Dôkazová reakcia násobnej väzby: oxidácia KMnO₄.'},
+{d:'e',s:'z',q:'Farba pri reakcii alkénu so zriedeným KMnO₄ (zásadité prostredie) sa zmení:',a:'z fialovej na hnedú',w:['z hnedej na fialovú','z modrej na červenú','nezmení sa'],x:'Fialový KMnO₄ sa zredukuje na hnedý MnO₂.'},
+{d:'m',s:'z',q:'Hnedá látka, ktorá vznikne pri dôkaze KMnO₄, je:',a:'MnO₂',w:['KOH','KMnO₄','Mn'],x:'CH₃–CH=CH₂ + KMnO₄ → CH₃–CH(OH)–CH₂–OH + MnO₂ + KOH. Hnedý je MnO₂.'},
+{d:'m',s:'z',q:'CH₃–CH=CH₂ + KMnO₄ (zried., OH⁻) ⟶ organický produkt?',a:'CH₃–CH(OH)–CH₂–OH',w:['CH₃–CH₂–CH₂–OH','CH₃–CH₂–CH₃','CH₃–CO–CH₃'],x:'Na oba uhlíky dvojitej väzby sa naviaže OH → propán-1,2-diol.'},
+{d:'m',s:'z',q:'Od čoho závisí priebeh oxidácie KMnO₄?',a:'od teploty a prostredia',w:['od farby nádoby','od tlaku vzduchu','od ničoho'],x:'V zošite: oxidácia KMnO₄ – závisí od teploty a prostredia.'},
+// ===== NAVYŠE =====
+{d:'e',s:'n',q:'CH₂=CH₂ + Br₂ ⟶ ?',a:'Br–CH₂–CH₂–Br (1,2-dibrómetán)',w:['CH₃–CH₂–Br','CH₂=CH–Br + HBr','CH₃–CH₃'],x:'Halogenácia: oba atómy brómu sa naviažu na oba uhlíky dvojitej väzby.'},
+{d:'e',s:'n',q:'Odfarbenie brómovej vody dokazuje:',a:'násobnú väzbu',w:['prítomnosť vody','alkán','kyslík'],x:'Hnedý bróm sa naviaže na dvojitú väzbu a roztok sa odfarbí – ďalší dôkaz násobnej väzby.'},
+{d:'m',s:'n',q:'Úplné horenie eténu: C₂H₄ + 3 O₂ ⟶ ?',a:'2 CO₂ + 2 H₂O',w:['2 CO + 2 H₂O','CO₂ + H₂O','2 C + 2 H₂O'],x:'Pri dokonalom horení uhľovodíkov vzniká CO₂ a voda. C₂H₄ + 3 O₂ → 2 CO₂ + 2 H₂O.'},
+{d:'h',s:'n',q:'Ktorý karbkatión je najstabilnejší?',a:'terciárny',w:['sekundárny','primárny','metylový'],x:'Stabilita: terciárny > sekundárny > primárny. Preto platí Markovnikov.'},
+{d:'m',s:'n',q:'CH₂=C(CH₃)–CH₃ + HCl ⟶ hlavný produkt?',a:'2-chlór-2-metylpropán',w:[['1-chlór-2-metylpropán','To by bolo anti-Markovnikovo. H ide na CH₂ (viac vodíkov).'],'2-chlórbután','2-metylpropán'],x:'H na CH₂=, Cl na uhlík s metylmi → terciárny karbkatión → 2-chlór-2-metylpropán.'},
+{d:'e',s:'n',q:'Etén v prírode funguje ako rastlinný hormón, ktorý:',a:'urýchľuje dozrievanie ovocia',w:['farbí listy na zeleno','spomaľuje rast koreňov navždy','premieňa vodu na víno'],x:'Etylén urýchľuje dozrievanie – preto banán vedľa avokáda urýchli jeho dozretie.'},
+{d:'m',s:'n',q:'Z tetrafluóreténu (CF₂=CF₂) vzniká:',a:'teflón (PTFE)',w:['PVC','polystyrén','silón'],x:'Polymerizáciou CF₂=CF₂ vzniká polytetrafluóretén = teflón (panvice).'},
+{d:'m',s:'n',q:'Pri halogenácii alkénu (Br₂) vzniká:',a:'dihalogénderivát – na susedných uhlíkoch',w:['monohalogénderivát','alkán a HBr','alkín'],x:'Br₂ sa naviaže na oba uhlíky dvojitej väzby → 1,2-dibróm-derivát.'},
+{d:'h',s:'n',q:'Prečo s HCl (s peroxidom) neplatí Kharaschovo pravidlo, ale s HBr áno?',a:'antimarkovnikova radikálová adícia funguje prakticky len s HBr',w:['HCl je ťažší ako HBr','peroxid sa s HCl nerozpadne na radikály nikdy','lebo HCl je plyn'],x:'Efekt peroxidu (Kharasch) sa prejavuje len pri HBr – pri HCl a HI radikálová reťaz neprebieha.'},
+{d:'m',s:'n',q:'Adícia vody na propén (H⁺) dá hlavne:',a:'propán-2-ol',w:[['propán-1-ol','To by bolo anti-Markovnikovo. OH ide na uhlík s menej vodíkmi.'],'propán-1,2-diol','propán'],x:'Hydratácia podľa Markovnikova: H na CH₂=, OH na =CH– → propán-2-ol.'},
+];
+
+/* ================= GENERÁTOR REAKCIÍ ================= */
+function clone(g) { return { n: g.n, adj: g.adj.map(a => a.map(e => [e[0], 1])) }; }
+function hOf(g, a) { return 4 - g.adj[a].reduce((s, e) => s + e[1], 0); }
+
+function classifySat(g, start, from, att) {
+  // vetva nesmie mať heteroatómy
+  const st = [[start, from]];
+  while (st.length) { const [x, p] = st.pop(); if (att[x].length) return null; for (const [y] of g.adj[x]) if (y !== p) st.push([y, x]); }
+  return C.classify(g, start, from);
+}
+function satInfos(g, att) {
+  const paths = g.n === 1 ? [[0]] : C.leafPaths(g);
+  const out = [];
+  for (const p of paths) for (const path of [p, p.slice().reverse()]) {
+    const set = new Set(path), subs = [], oh = []; let ok = true;
+    path.forEach((a, i) => {
+      for (const X of att[a]) { if (X === 'OH') oh.push(i + 1); else subs.push({ pos: i + 1, name: HAL[X] }); }
+      for (const [b] of g.adj[a]) if (!set.has(b)) { const c = classifySat(g, b, a, att); if (!c) ok = false; else subs.push({ pos: i + 1, name: c }); }
+    });
+    out.push({ path, L: path.length, oh, subs, ok });
+  }
+  return out;
+}
+function cmpA(a, b) { for (let i = 0; i < Math.min(a.length, b.length); i++) if (a[i] !== b[i]) return a[i] - b[i]; return a.length - b.length; }
+function satKey(x) {
+  return { oh: x.oh.length, L: x.L, n: x.subs.length, ohl: x.oh.slice().sort(num), sl: x.subs.map(s => s.pos).sort(num),
+    al: x.subs.slice().sort((p, q) => p.name < q.name ? -1 : p.name > q.name ? 1 : p.pos - q.pos).map(s => s.pos) };
+}
+function satCmp(a, b) {
+  const A = satKey(a), B = satKey(b);
+  if (A.oh !== B.oh) return B.oh - A.oh;
+  if (A.L !== B.L) return B.L - A.L;
+  if (A.n !== B.n) return B.n - A.n;
+  let c = cmpA(A.ohl, B.ohl); if (c) return c;
+  c = cmpA(A.sl, B.sl); if (c) return c;
+  return cmpA(A.al, B.al);
+}
+function satAssemble(x) {
+  const m = new Map();
+  for (const s of x.subs) { if (!m.has(s.name)) m.set(s.name, []); m.get(s.name).push(s.pos); }
+  const groups = [...m.entries()].sort((a, b) => a[0] < b[0] ? -1 : 1).map(([name, l]) => ({ name, locs: l.sort(num) }));
+  const k = x.oh.length, L = x.L, stem = STEM[L];
+  const noLoc = L <= 2 && (x.subs.length + k) === 1;
+  const pre = groups.map(g => (noLoc ? '' : g.locs.join(',') + '-') + MULT[g.locs.length] + g.name).join('-');
+  let core;
+  if (k === 0) core = stem + 'án';
+  else if (k === 1) core = L <= 2 ? stem + 'anol' : stem + 'án-' + x.oh[0] + '-ol';
+  else core = stem + 'án-' + x.oh.slice().sort(num).join(',') + '-' + MULT[k] + 'ol';
+  return pre + core;
+}
+function satName(g, att) {
+  const infos = satInfos(g, att);
+  const valid = infos.filter(x => x.ok).sort(satCmp);
+  if (!valid.length) return null;
+  const b = valid[0];
+  const maxOH = Math.max(...infos.map(x => x.oh.length));
+  if (b.oh.length < maxOH || b.L < Math.max(...infos.filter(x => x.oh.length === maxOH).map(x => x.L))) return null;
+  const rev = infos.find(x => x.path.join() === b.path.slice().reverse().join());
+  return { name: satAssemble(b), best: b, revName: rev && rev.ok ? satAssemble(rev) : null };
+}
+
+/* lineárny (racionálny) vzorec ako text */
+function linFormula(g, att, path, orders) {
+  const set = new Set(path), parts = [];
+  path.forEach((a, i) => {
+    const br = g.adj[a].filter(e => !set.has(e[0]));
+    const h = 4 - g.adj[a].reduce((s, e) => s + e[1], 0) - att[a].length;
+    let s = 'C' + (h > 0 ? 'H' + (h > 1 ? sub(h) : '') : '');
+    const hal = att[a].filter(x => x !== 'OH'), oh = att[a].filter(x => x === 'OH').length;
+    if (hal.length) { const cnt = {}; hal.forEach(x => cnt[x] = (cnt[x] || 0) + 1); s += Object.entries(cnt).map(([x, c]) => x + (c > 1 ? sub(c) : '')).join(''); }
+    if (oh) s += (i === path.length - 1 && !br.length && oh === 1) ? '–OH' : '(OH)' + (oh > 1 ? sub(oh) : '');
+    const me = br.filter(e => C.classify(g, e[0], a) === 'metyl').length;
+    if (me) s += '(CH₃)' + (me > 1 ? sub(me) : '');
+    parts.push(s);
+  });
+  let out = parts[0];
+  for (let i = 1; i < path.length; i++) out += (orders && orders(path[i - 1], path[i]) === 2 ? '=' : '–') + parts[i];
+  // „CH₂–OH“ ako „CH₂–OH“, hlavu s OH dáme na koniec
+  return out;
+}
+function bestLinPath(g, att) {
+  const paths = g.n === 1 ? [[0]] : C.leafPaths(g);
+  let best = null, bestScore = -1;
+  for (const p of paths) for (const path of [p, p.slice().reverse()]) {
+    // len cesty, kde sú vetvy iba metylové
+    const set = new Set(path);
+    let ok = true;
+    path.forEach(a => g.adj[a].forEach(e => { if (!set.has(e[0]) && (C.classify(g, e[0], a) !== 'metyl' || att[e[0]].length)) ok = false; }));
+    if (!ok) continue;
+    const firstHet = att[path[0]].length ? 1 : 0, lastHet = att[path[path.length - 1]].length ? 1 : 0;
+    const score = path.length * 10 + lastHet * 2 - firstHet;
+    if (score > bestScore) { bestScore = score; best = path; }
+  }
+  return best;
+}
+
+const ALKENES = [
+  // nerozvetvené: L, poloha
+  ['u', 2, 1], ['u', 3, 1], ['u', 4, 1], ['u', 4, 2], ['u', 5, 1], ['u', 5, 2], ['u', 6, 1], ['u', 6, 3], ['u', 6, 2],
+  // rozvetvené (bez preskupení karbkatiónu)
+  ['b', 3, 1, [[2, 'metyl']]], ['b', 4, 1, [[2, 'metyl']]], ['b', 4, 2, [[2, 'metyl']]], ['b', 4, 2, [[2, 'metyl'], [3, 'metyl']]], ['b', 5, 2, [[2, 'metyl']]], ['b', 5, 1, [[2, 'metyl']]]
+];
+function makeAlkene(spec) {
+  const [t, L, p, subs] = spec;
+  return C.makeMol('chain', { L, dbs: [p], subs: (subs || []).map(([pos, type]) => ({ pos, type })) }, 't');
+}
+
+const RX = {
+  H2:    { re: 'H₂', cond: 'Ni', d: 'e', label: 'hydrogenácia' },
+  HX:    { re: null, cond: '', d: 'm', label: 'elektrofilná adícia HX' },
+  HBrP:  { re: 'HBr', cond: 'R–O–O–R', d: 'h', label: 'radikálová adícia (Kharasch)' },
+  H2O:   { re: 'H₂O', cond: 'H₂SO₄', d: 'm', label: 'hydratácia' },
+  X2:    { re: null, cond: '', d: 'm', label: 'halogenácia', extra: true },
+  KMnO4: { re: 'KMnO₄', cond: 'zried., OH⁻', d: 'h', label: 'oxidácia KMnO₄' }
+};
+
+function addProduct(alk, how, X) {
+  const g0 = alk.g;
+  let a = -1, b = -1;
+  for (let i = 0; i < g0.n && a < 0; i++) for (const [j, o] of g0.adj[i]) if (o === 2 && j > i) { a = i; b = j; }
+  const ha = hOf(g0, a), hb = hOf(g0, b);
+  const more = ha >= hb ? a : b, less = more === a ? b : a; // more = viac vodíkov
+  const g = clone(g0), att = Array.from({ length: g.n }, () => []);
+  switch (how) {
+    case 'H2': break;
+    case 'markov': att[less].push(X); break;
+    case 'anti': att[more].push(X); break;
+    case 'vic': att[a].push(X); att[b].push(X); break;
+    case 'gem': att[less].push(X, X); break;
+  }
+  for (let i = 0; i < g.n; i++) if (g.adj[i].length + att[i].length > 4) return null;
+  const nm = satName(g, att); if (!nm) return null;
+  const path = bestLinPath(g, att);
+  return { g, att, name: nm.name, revName: nm.revName, lin: path ? linFormula(g, att, path) : nm.name, eq: ha === hb };
+}
+function alkLin(alk) {
+  const g = alk.g, att = Array.from({ length: g.n }, () => []);
+  const path = bestLinPath(g, att);
+  return linFormula(g, att, path, (x, y) => C.order(g, x, y));
+}
+
+function genReaction(diff, extra) {
+  for (let t = 0; t < 60; t++) {
+    const pool = Object.keys(RX).filter(k => (extra || !RX[k].extra) && (diff === 'mix' || RX[k].d === diff || (diff === 'h' && RX[k].d === 'm') || (diff === 'e' && k === 'HX')));
+    const rk = pick(pool);
+    const spec = pick(diff === 'e' ? ALKENES.filter(s => s[0] === 'u' && s[1] <= 4) : ALKENES);
+    const alk = makeAlkene(spec); if (!alk) continue;
+    const X = rk === 'HX' ? pick(['Cl', 'Br', 'I']) : rk === 'HBrP' ? 'Br' : rk === 'X2' ? pick(['Br', 'Cl']) : null;
+    let corr, wrongs = [];
+    const P = (how, x) => addProduct(alk, how, x);
+    const reagent = rk === 'HX' ? 'H' + X : rk === 'X2' ? X + '₂' : RX[rk].re;
+    if (rk === 'H2') {
+      corr = P('H2');
+      wrongs = [[P('markov', 'OH'), 'Toto by vzniklo s vodou (hydratácia), nie s vodíkom.'], [P('vic', 'OH'), 'Dve OH skupiny dá oxidácia KMnO₄, nie vodík.'], [P('markov', 'Br'), 'Toto by vzniklo s HBr. Vodík pridá len atómy H → alkán.']];
+    } else if (rk === 'HX') {
+      corr = P('markov', X);
+      wrongs = [[P('anti', X), 'Toto by vzniklo s peroxidom (Kharasch). Bez peroxidu ide H na uhlík s viac vodíkmi, ' + X + ' na ten s menej.'], [P('vic', X), 'Dva atómy halogénu pribudnú s ' + X + '₂, nie s H' + X + '.'], [P('H2'), 'Toto je produkt hydrogenácie (H₂), nie adície H' + X + '.']];
+    } else if (rk === 'HBrP') {
+      corr = P('anti', 'Br');
+      wrongs = [[P('markov', 'Br'), 'Bez peroxidu by to tak bolo (Markovnikov). S peroxidom platí Kharasch: Br ide na uhlík s viac vodíkmi.'], [P('vic', 'Br'), 'Dva atómy brómu pribudnú s Br₂, nie s HBr.'], [P('H2'), 'Toto je produkt hydrogenácie (H₂).']];
+    } else if (rk === 'H2O') {
+      corr = P('markov', 'OH');
+      wrongs = [[P('anti', 'OH'), 'Hydratácia ide podľa Markovnikova: H na uhlík s viac vodíkmi, OH na uhlík s menej vodíkmi.'], [P('vic', 'OH'), 'Dve OH skupiny dá oxidácia KMnO₄, voda pridá len jednu.'], [P('H2'), 'Alkán vznikne s H₂, nie s vodou.']];
+    } else if (rk === 'X2') {
+      corr = P('vic', X);
+      wrongs = [[P('markov', X), 'Jeden atóm halogénu a jeden H pribudne s H' + X + '. S ' + X + '₂ sa naviažu dva atómy halogénu.'], [P('gem', X), 'Každý uhlík dvojitej väzby dostane jeden atóm halogénu – nie oba na jeden uhlík.'], [P('H2'), 'Alkán vznikne s H₂.']];
+    } else {
+      corr = P('vic', 'OH');
+      wrongs = [[P('markov', 'OH'), 'KMnO₄ pridá OH na oba uhlíky dvojitej väzby (diol), nie len na jeden.'], [P('H2'), 'Alkán vznikne s H₂.'], [P('vic', 'Br'), 'Toto by vzniklo s brómom (Br₂).']];
+    }
+    if (!corr) continue;
+    // nejednoznačný Markovnikov (oba uhlíky s rovnakým počtom H, ale rôzne produkty) – preskočiť
+    if (['HX', 'HBrP', 'H2O'].includes(rk) && corr.eq) {
+      const alt = rk === 'HBrP' ? P('markov', 'Br') : P('anti', rk === 'H2O' ? 'OH' : X);
+      if (!alt || alt.name !== corr.name) continue;
+    }
+    const mode = Math.random() < 0.5 ? 'name' : 'lin';
+    const opts = [{ text: mode === 'name' ? corr.name : corr.lin, ok: true }];
+    const seen = new Set([corr.name]);
+    for (const [w, why] of wrongs) { if (!w || seen.has(w.name)) continue; seen.add(w.name); opts.push({ text: mode === 'name' ? w.name : w.lin, why: why + ' (To by bol ' + w.name + '.)' }); }
+    if (mode === 'name' && corr.revName && !seen.has(corr.revName) && opts.length < 4) { seen.add(corr.revName); opts.push({ text: corr.revName, why: 'Látka sedí, ale číslovanie nie – lokanty majú byť čo najnižšie: ' + corr.name + '.' }); }
+    if (opts.length < 4) continue;
+    const eqNote = corr.eq && ['HX', 'HBrP', 'H2O'].includes(rk) ? 'Oba uhlíky dvojitej väzby majú rovnako vodíkov, takže na tom, kam čo ide, nezáleží.' : null;
+    const expl = {
+      H2: ['Hydrogenácia: H₂ sa naviaže na oba uhlíky dvojitej väzby (katalyzátor Ni, Pt alebo Pd).', 'Dvojitá väzba zanikne → vznikne alkán.'],
+      HX: ['Elektrofilná adícia (A_E) podľa Markovnikovho pravidla.', eqNote || 'H sa viaže na uhlík dvojitej väzby s viac vodíkmi, ' + X + ' na uhlík s menej vodíkmi.'],
+      HBrP: ['Peroxid R–O–O–R → radikálová adícia (A_R) podľa Kharascha (antimarkovnikovo).', eqNote || 'Br (ťažšia častica) sa viaže na uhlík dvojitej väzby s viac vodíkmi.'],
+      H2O: ['Hydratácia: voda sa naviaže za katalýzy H⁺ (H₂SO₄) podľa Markovnikova.', eqNote || 'H na uhlík s viac vodíkmi, OH na uhlík s menej vodíkmi → alkohol.'],
+      X2: ['Halogenácia: ' + X + '₂ sa naviaže na oba uhlíky dvojitej väzby – každý dostane jeden atóm ' + HAL[X] + 'u.'],
+      KMnO4: ['Zriedený KMnO₄ v zásaditom prostredí (fialová → hnedá, vzniká MnO₂).', 'Na oba uhlíky dvojitej väzby sa naviaže OH → diol.']
+    }[rk].concat(['Produkt: ' + corr.name + ' (' + corr.lin + ').']);
+    const cond = RX[rk].cond;
+    return {
+      custom: true, gen: true, diff: RX[rk].d === 'e' ? 'easy' : RX[rk].d === 'm' ? 'medium' : 'hard',
+      ask: mode === 'name' ? 'Ako sa volá produkt?' : 'Aký je produkt?',
+      eq: { lhs: alkLin(alk) + ' + ' + reagent, cond, sub: alk.name },
+      opts: shuffle(opts.slice(0, 4)), answer: mode === 'name' ? corr.name : corr.lin, expl
+    };
+  }
+  return null;
+}
+
+/* ================= SKLADANIE TESTU ================= */
+const DMAP = { easy: 'e', medium: 'm', hard: 'h' };
+function bankQ(b) {
+  const opts = [{ text: b.a, ok: true }, ...b.w.map(w => Array.isArray(w) ? { text: w[0], why: w[1] } : { text: w })];
+  return { custom: true, diff: b.d === 'e' ? 'easy' : b.d === 'm' ? 'medium' : 'hard', ask: b.s === 'n' ? 'Navyše:' : 'Zo zošita:', text: b.q, opts: shuffle(opts), answer: b.a, expl: [b.x], key: b.q };
+}
+function buildTest(extra, diff, n) {
+  const want = diff === 'mix' ? null : DMAP[diff];
+  const order = { e: ['e', 'm', 'h'], m: ['m', 'e', 'h'], h: ['h', 'm', 'e'] };
+  let pool = BANK.filter(b => extra || b.s === 'z');
+  let chosen = [];
+  if (!want) chosen = shuffle(pool.slice());
+  else for (const d of order[want]) chosen = chosen.concat(shuffle(pool.filter(b => b.d === d)));
+  const qs = [];
+  const nGen = extra ? Math.round(n * 0.45) : 0;
+  const nBank = n - nGen;
+  // pri „navyše“ aspoň 2 otázky z navyše banky
+  if (extra) {
+    const nav = shuffle(pool.filter(b => b.s === 'n' && (!want || b.d === want || true))).slice(0, 2);
+    nav.forEach(b => qs.push(bankQ(b)));
+    chosen = chosen.filter(b => !nav.includes(b));
+  }
+  for (const b of chosen) { if (qs.length >= nBank) break; qs.push(bankQ(b)); }
+  const gd = want || 'mix';
+  for (let i = 0, t = 0; i < nGen && t < 80; t++) {
+    const q = genReaction(gd, true); if (!q) continue;
+    if (qs.some(x => x.answer === q.answer)) continue;
+    qs.push(q); i++;
+  }
+  return shuffle(qs).slice(0, n);
+}
+
+const api = { BANK, genReaction, buildTest, satName, addProduct, makeAlkene, alkLin };
+root.ChemReact = api;
+if (typeof module !== 'undefined') module.exports = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
 </script>
 <script>
 /* ===== chémia – aplikácia ===== */
 (function () {
 'use strict';
-const C = window.Chem, R = window.ChemRender;
+const C = window.Chem, R = window.ChemRender, RX = window.ChemReact;
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -1246,7 +1653,8 @@ const N_Q = 10;
 const TYPED_SHARE = { easy: 0.5, medium: 0.4, hard: 0.3 };
 const TIME = {
   1: { mcq: { easy: 35, medium: 45, hard: 55 }, typed: { easy: 70, medium: 100, hard: 130 } },
-  2: { mcq: { easy: 40, medium: 50, hard: 65 } }
+  2: { mcq: { easy: 40, medium: 50, hard: 65 } },
+  r: { easy: 40, medium: 50, hard: 60 }
 };
 const DIFF = {
   easy:   { lbl: 'Ľahké',  t: 'Ešte to ide',          d: 'Nerozvetvené alkény, jednoduché cykloalkény', e: '🙂' },
@@ -1254,7 +1662,27 @@ const DIFF = {
   hard:   { lbl: 'Ťažké',  t: 'Prečo mi toto robíš', d: 'Polyény, vinyl a izopropyl, cyklodiény, cis/trans', e: '💀' },
   mix:    { lbl: 'Mix',    t: 'Chaos',               d: 'Všetko dokopy, náhodne', e: '🌪️' }
 };
-const TEST = { 1: 'Vzorec → názov', 2: 'Názov → vzorec', 3: 'Dopipiny, oboje!' };
+const TEST = { 1: 'Vzorec → názov', 2: 'Názov → vzorec', 3: 'Dopipiny, oboje!', 4: 'Reakcie – len zo zošita', 5: 'Reakcie – zošit + navyše' };
+const DIFF_R = { easy: 'Výroba, fyzikálne vlastnosti, polyméry, hydrogenácia', medium: 'Adície, Markovnikov, Kharasch, produkty reakcií', hard: 'Mechanizmy, karbkatióny, radikály, KMnO₄', mix: 'Všetko dokopy, náhodne' };
+const TOPICS = {
+  naz: { lbl: 'Názvoslovie', e: '🏷️', t: 'Ako sa to dopipiny volá', tests: [
+    [1, '🧪', 'Vzorec → názov', 'Pozri vzorec, vymysli meno. Raz klikáš, raz píšeš.'],
+    [2, '🔬', 'Názov → vzorec', 'Máš meno, nájdi ten správny vzorec zo štyroch.'],
+    [3, '🤬', 'Dopipiny, oboje!', 'Raz vzorec, raz názov. Chémia útočí zo všetkých strán a ty sa bráň, ako vieš.']] },
+  rea: { lbl: 'Reakcie', e: '💥', t: 'Čo s čím a prečo a začo dopiče!', tests: [
+    [4, '📒', 'Len zo zošita', 'Iba to, čo máš v zošite. Ak si sa na to nevyjebala.'],
+    [5, '📒➕', 'Zošit + navyše', 'Lebo chceš byť goat.']] }
+};
+let TOPIC = 'naz';
+try { if (TOPICS[localStorage.getItem('chemia_topic')]) TOPIC = localStorage.getItem('chemia_topic'); } catch (e) {}
+const TKEY = 'chemia_total_sec';
+function totalSec() { try { return +localStorage.getItem(TKEY) || 0; } catch (e) { return 0; } }
+function addTotal(sec) { try { localStorage.setItem(TKEY, String(totalSec() + Math.max(0, Math.round(sec)))); } catch (e) {} renderWasted(); }
+function fmtLong(sec) { const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60; return h ? `${h} h ${m} min` : m ? `${m} min ${s} s` : `${s} s`; }
+function renderWasted() {
+  const t = totalSec(), el = document.getElementById('wasted'); if (!el) return;
+  el.innerHTML = '⏳ Prejebaný čas s touto posranou hrou: <b>' + (t ? fmtLong(t) : '0 s. Zatiaľ.') + '</b>';
+}
 const SHAPES = ['▲', '◆', '●', '■'];
 const fmtDur = sec => { const m = Math.floor(sec / 60), s = sec % 60; return m ? `${m} min ${s} s` : `${s} s`; };
 
@@ -1265,8 +1693,10 @@ const STREAK = { 3: '3 za sebou?! Začínaš sa učiť. Fuj.', 5: '5 za sebou. T
 
 /* ---------- ocino ---------- */
 const OC_BAD = ['Hahaha, toto fakt nie. Skús ešte raz, princezná.', 'Aj banka sa hanbí. A to je len sklo.', 'Toto si si vymyslela, priznaj sa.', 'KOKOTINA.', 'Ty hňup!', 'To je výmysel tak ako voda v kolene.', 'Zas zle, píšem si.', 'Ty budeš chcieť žuvak!'];
+const OC_BAD_R = ['Hahaha, čo tiebe', 'Hanba ty riť!', 'Sama nevieš, priznaj sa.', 'KOKOTINA.', 'Takto to vyzerá keď na teba jebe učiteľka!', 'Napiču, jak tvoj výber filmov!', 'Sklam... nebudeme ako Mirek', 'Ty budeš chcieť aby som bol milý!'];
 const OC_TIME = ['Tak to si dojebala!'];
 const OC_PROUD = ['No vidíš, keď chceš.', 'Náhoda. Určite náhoda.', 'Isto si podvádzala!', 'Konečne ty RIŤ!', 'Haleluja!!', 'Konečne môžem byť trošku hrdý!'];
+const OC_PROUD_R = ['Ďakuj Claudovi, ja nwm nič z tohoto', 'BAHAHAH pekneee.', 'Kto ma kurva vedieť či to je dobre!', 'Konečne ty PRD!', 'Haleluja!!', 'Konečne môžem byť trošku hrdý-klamem!'];
 let ocT = null, ocLast = '';
 function ocPick(a) { let t; do { t = a[Math.floor(Math.random() * a.length)]; } while (a.length > 1 && t === ocLast); ocLast = t; return t; }
 function ocino(mode, text, ms) {
@@ -1293,14 +1723,21 @@ let S = null; // stav testu
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
   window.scrollTo(0, 0);
-  if (id === 'home') mascot(null);
+  if (id === 'home') { mascot(null); renderWasted(); }
+  if (S && !S.over && id !== 'quiz') { S.over = true; addTotal((Date.now() - S.t0) / 1000); }
   ocinoHide();
 }
 document.addEventListener('click', e => {
   const go = e.target.closest('[data-go]');
   if (go) { stopTimer(); show(go.dataset.go); }
 });
-document.querySelectorAll('[data-test]').forEach(b => b.addEventListener('click', () => openDiff(+b.dataset.test)));
+function renderTopics() {
+  $('#topics').innerHTML = Object.entries(TOPICS).map(([k, t]) => `<button class="topic${k === TOPIC ? ' on' : ''}" data-topic="${k}"><span class="te">${t.e}</span><span class="tl">${t.lbl}</span><span class="tt">„${t.t}“</span></button>`).join('');
+  $('#topics').querySelectorAll('[data-topic]').forEach(b => b.addEventListener('click', () => { TOPIC = b.dataset.topic; try { localStorage.setItem('chemia_topic', TOPIC); } catch (e) {} renderTopics(); }));
+  $('#tests').innerHTML = TOPICS[TOPIC].tests.map(([id, e, t, d]) => `<button class="big" data-test="${id}"><span class="badge">${e}</span><span class="bt">${t}</span><span class="bs">${d}</span></button>`).join('');
+  $('#tests').querySelectorAll('[data-test]').forEach(b => b.addEventListener('click', () => openDiff(+b.dataset.test)));
+}
+renderTopics(); renderWasted();
 $('#btnHist').addEventListener('click', () => { renderHist(); show('history'); });
 $('#btnCheat').addEventListener('click', () => show('cheat'));
 $('#btnAgain').addEventListener('click', () => startTest(S.test, S.diff));
@@ -1308,7 +1745,7 @@ $('#btnAgain').addEventListener('click', () => startTest(S.test, S.diff));
 function openDiff(test) {
   $('#diffTitle').textContent = TEST[test];
   $('#diffList').innerHTML = Object.entries(DIFF).map(([k, d]) =>
-    `<button class="big" data-d="${k}"><span class="badge">${d.e}</span><span class="bt">${d.lbl} – „${d.t}“</span><span class="bs">${d.d}</span></button>`).join('');
+    `<button class="big" data-d="${k}"><span class="badge">${d.e}</span><span class="bt">${d.lbl} – „${d.t}“</span><span class="bs">${test >= 4 ? DIFF_R[k] : d.d}</span></button>`).join('');
   $('#diffList').querySelectorAll('[data-d]').forEach(b => b.addEventListener('click', () => startTest(test, b.dataset.d)));
   show('diff');
 }
@@ -1337,8 +1774,9 @@ function buildQuestion(test, diff, avoid) {
 }
 
 function startTest(test, diff) {
-  const avoid = new Set(), qs = [];
-  for (let i = 0; i < N_Q; i++) { const q = buildQuestion(test, diff, avoid); if (q) qs.push(q); }
+  const avoid = new Set(); let qs = [];
+  if (test >= 4) qs = RX.buildTest(test === 5, diff, N_Q).map(q => Object.assign(q, { test: 'r', time: TIME.r[q.diff] }));
+  else for (let i = 0; i < N_Q; i++) { const q = buildQuestion(test, diff, avoid); if (q) qs.push(q); }
   S = { test, diff, qs, i: 0, t0: Date.now(), ans: 0, score: 0, streak: 0, best: 0, correct: 0, half: 0, mistakes: [] };
   show('quiz');
   renderQ();
@@ -1374,7 +1812,11 @@ function renderQ() {
   ocinoHide();
   header();
   $('#feedback').innerHTML = '';
-  if (q.test === 1) {
+  if (q.custom) {
+    $('#prompt').innerHTML = `<p class="ask">${esc(q.ask)}</p>` + (q.eq
+      ? `<div class="rx"><span>${esc(q.eq.lhs)}</span><span class="arrow">${q.eq.cond ? `<small>${esc(q.eq.cond)}</small>` : ''}⟶</span><span class="qm">?</span></div><div class="rxsub">${esc(q.eq.sub)}</div>`
+      : `<div class="qtext">${esc(q.text)}</div>`);
+  } else if (q.test === 1) {
     $('#prompt').innerHTML = `<p class="ask">${q.typed ? 'Napíš názov tejto látky:' : 'Ako sa volá táto látka?'}</p><div class="paper">${q.svg}</div>`;
   } else {
     $('#prompt').innerHTML = `<p class="ask">Nájdi vzorec látky:</p><div class="name">${esc(q.m.name)}</div>`;
@@ -1422,7 +1864,7 @@ function answer(choice, timeout) {
     const o = q.opts[choice];
     verdict = o.ok ? 'ok' : 'wrong';
     why = o.why || null;
-    yours = q.test === 1 ? o.text : o.mol.name;
+    yours = q.custom || q.test === 1 ? o.text : o.mol.name;
   }
   // body
   let pts = 0;
@@ -1465,14 +1907,15 @@ function answer(choice, timeout) {
   else if (verdict === 'timeout') { head = 'Čas vypršal ⏰'; snark = pick(TIMEOUT); cls = 'bad'; }
   else { head = 'Nesprávne ✗'; snark = pick(BAD); cls = 'bad'; }
   if (good && STREAK[S.streak]) snark = STREAK[S.streak];
-  if (verdict === 'wrong') { ocino('mock', ocPick(OC_BAD)); snark = ''; }
+  if (verdict === 'wrong') { ocino('mock', ocPick(q.custom ? OC_BAD_R : OC_BAD)); snark = ''; }
   else if (verdict === 'timeout') { ocino('yawn', ocPick(OC_TIME)); snark = ''; }
 
-  const bd = C.breakdown(q.m).map(l => `<li>${esc(l)}</li>`).join('');
+  const bd = (q.custom ? q.expl : C.breakdown(q.m)).map(l => `<li>${esc(l)}</li>`).join('');
   let html = `<div class="fb ${cls}"><span class="pts${pts ? '' : ' zero'}">+${pts}</span><div class="head">${head}</div>${snark ? `<div class="snark">${esc(snark)}</div>` : ''}`;
   if (note) html += `<div class="ans">${esc(note)}</div>`;
   if (!good) {
-    if (q.test === 1) html += `<div class="ans">Správne: <b>${esc(q.m.name)}</b>${q.typed && yours ? `<br><span style="color:var(--muted)">Ty: ${esc(yours)}</span>` : ''}</div>`;
+    if (q.custom) html += `<div class="ans">Správne: <b>${esc(q.answer)}</b></div>`;
+    else if (q.test === 1) html += `<div class="ans">Správne: <b>${esc(q.m.name)}</b>${q.typed && yours ? `<br><span style="color:var(--muted)">Ty: ${esc(yours)}</span>` : ''}</div>`;
     else html += `<div class="ans">Správny vzorec je označený ✓.</div>`;
     if (why) html += `<div class="explain"><div class="t">Kde je chyba</div>${esc(why)}</div>`;
     html += `<div class="explain"><div class="t">Ako na to</div><ul>${bd}</ul></div>`;
@@ -1496,6 +1939,7 @@ function next() {
 function finish() {
   stopTimer();
   const dur = Math.round((Date.now() - S.t0) / 1000), ansDur = Math.round(S.ans);
+  if (!S.over) { S.over = true; addTotal(dur); }
   const tot = S.qs.length, pct = Math.round(100 * (S.correct + S.half * 0.5) / tot);
   let msg;
   if (pct === 100) msg = 'Gratulujem, si oficiálne chemička. Je mi ťa ľúto. 🧪';
@@ -1511,13 +1955,15 @@ function finish() {
     <div class="score">${S.score} b</div>
     <div class="stat">${S.correct}/${tot} správne${S.half ? ` (+${S.half} s výhradou)` : ''} · ${pct} % · najdlhšia séria ${S.best}</div>
     <div class="stat">⏱ Test trval ${fmtDur(dur)} (z toho premýšľanie nad odpoveďami ${fmtDur(ansDur)})</div>
+    <div class="stat">⏳ Prejebaný čas s touto posranou hrou celkovo: ${fmtLong(totalSec())}</div>
     <div class="msg">${msg}</div>`;
   let mh = '';
   if (S.mistakes.length) {
     mh = `<h2 style="margin-top:24px">Prehľad chýb</h2><p class="sub">Toto si ešte raz pozri. Áno, teraz.</p>`;
     for (const { q, yours } of S.mistakes) {
       mh += `<div class="mist">`;
-      if (q.test === 1) mh += `<div class="paper">${q.svg}</div><div class="yours">Ty: ${esc(yours)}</div><div class="good">Správne: ${esc(q.m.name)}</div>`;
+      if (q.custom) mh += `<div class="q">${q.eq ? esc(q.eq.lhs + ' ⟶ ?') + (q.eq.cond ? ' (' + esc(q.eq.cond) + ')' : '') : esc(q.text)}</div><div class="yours">Ty: ${esc(yours)}</div><div class="good">Správne: ${esc(q.answer)}</div>`;
+      else if (q.test === 1) mh += `<div class="paper">${q.svg}</div><div class="yours">Ty: ${esc(yours)}</div><div class="good">Správne: ${esc(q.m.name)}</div>`;
       else mh += `<div class="q">Hľadaný vzorec: <b>${esc(q.m.name)}</b></div><div class="paper">${q.opts.find(o => o.ok).svg}</div><div class="yours">Ty: ${esc(yours)}</div>`;
       mh += `</div>`;
     }
@@ -1525,17 +1971,18 @@ function finish() {
   $('#mistakes').innerHTML = mh;
   show('results');
   mascot(pct >= 50 ? 'ok' : 'boom');
-  if (S.correct >= 7) setTimeout(() => ocino('proud', ocPick(OC_PROUD), 7000), 500);
+  if (S.correct >= 7) setTimeout(() => ocino('proud', ocPick(S.test >= 4 ? OC_PROUD_R : OC_PROUD), 7000), 500);
 }
 
 /* ---------- história ---------- */
 function renderHist() {
   const h = loadHist();
-  if (!h.length) { $('#histBox').innerHTML = '<p class="empty">Zatiaľ žiadne utrpenie. To sa dá rýchlo napraviť.</p>'; return; }
+  const wasted = `<div class="wasted big2">⏳ Prejebaný čas s touto posranou hrou: <b>${fmtLong(totalSec())}</b></div>`;
+  if (!h.length) { $('#histBox').innerHTML = wasted + '<p class="empty">Zatiaľ žiadne utrpenie. To sa dá rýchlo napraviť.</p>'; return; }
   const best = {};
   for (const r of h) { const k = r.test + '|' + r.diff; if (!best[k] || r.score > best[k].score) best[k] = r; }
-  let html = '<h3 style="margin:8px 0 0">Najlepšie skóre</h3><div class="best">';
-  for (const t of [1, 2, 3]) for (const d of Object.keys(DIFF)) {
+  let html = wasted + '<h3 style="margin:8px 0 0">Najlepšie skóre</h3><div class="best">';
+  for (const t of [1, 2, 3, 4, 5]) for (const d of Object.keys(DIFF)) {
     const b = best[t + '|' + d]; if (!b) continue;
     html += `<div><small>${TEST[t]} · ${DIFF[d].lbl}</small><b>${b.score} b</b> <small>${b.correct}/${b.total}</small></div>`;
   }
